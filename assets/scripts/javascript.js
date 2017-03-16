@@ -13,7 +13,7 @@ var db = firebase.database();
 function initMap(){
 	// create map object using google maps api method
 	var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 4
+          zoom: 10
       	});
 	// create window object with google maps api
 	var infoWindow = new google.maps.InfoWindow({map: map});
@@ -27,7 +27,7 @@ function initMap(){
           lng: position.coords.longitude
         };
         infoWindow.setPosition(userPos);
-        infoWindow.setContent('You are here (we think).');
+        infoWindow.setContent('You are here \(we think\).');
         map.setCenter(userPos);
       }, function() {
         handleLocationError(true, infoWindow, map.getCenter());
