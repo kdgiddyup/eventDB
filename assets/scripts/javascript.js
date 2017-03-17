@@ -12,10 +12,12 @@ var db = firebase.database();
 // init map callback for google maps api
 function initMap(){
 	// create map object using google maps api method
-	var map = new google.maps.Map(document.getElementById('map'), {
+	map = new google.maps.Map(document.getElementById('map'), {
           zoom: 10
       	});
-
+	var infoWindow = new google.maps.InfoWindow({
+		content: '<p>You are here (we think)</p>'
+	});
  // we want to attempt to center the map at the user's present location
  // Try HTML5 geolocation.
     if (navigator.geolocation) {
@@ -32,7 +34,7 @@ function initMap(){
         };
 
         // send user position to addMarker function
-		addMarker(userPos, map);
+		addMarker(userPos,infoWindow);
 
         // update map object with new center location
         map.setCenter(mapCenter);
@@ -45,19 +47,31 @@ function initMap(){
     }
   }
 
-// pass a lat/lng object to this function to place a marker on the map
-function addMarker(pos, thisMap){
+// function to add multiple markers from search response
+// resultData will be array of objects in format:
+// [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
+function showResults(resultData) {
+	console.log(resultData);
+	// loop through result data array
+	for (var i=0;i<resultData.length;i++){
+		// create InfoWindow
+		var thisWindow = new google.maps.InfoWindow({
+			content: ''
+		})
+	}
+}
+
+// pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
+function addMarker(pos,markerInfo){
     var marker = new google.maps.Marker({
       position: pos,
-      map: thisMap
+      map: map
     });
-	
-	// place infoWindow location at userPos
-  	//infoWindow.setPosition(pos);
-        
-    // message user in the infoWindow
-    //infoWindow.setContent('You are here \(we think\).');
-}
+    // put listener on this marker to open the marker info in an infowindow
+    marker.addListener('click', function() {
+    	markerInfo.open(map, this);
+  	});
+    }
 
   // this code is straight from google API documentation, for handling errors that occur during attempted browser geolocation
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -66,3 +80,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       'Error: The Geolocation service failed.' :
       'Error: Your browser doesn\'t support geolocation.');
   }
+// to do
+// can use circle symbols of various sizes to represent popularity of restaurant (if available);
+
+
