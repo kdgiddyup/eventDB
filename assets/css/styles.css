@@ -18,9 +18,9 @@ body {
 /* test stuff */
 
 #eventTester {
-    position: absolute;
-    top: 40px;
-    left: 50px;
+	position: absolute;
+	top: 40px;
+	left: 50px;
 }
 
 #restTester {
@@ -28,3 +28,5 @@ body {
     top: 80px;
     left: 50px;
 }
+.leadin {
+	font-weight: bold;
