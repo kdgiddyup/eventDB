@@ -1,15 +1,3 @@
-// Initialize Firebase
-var config = {
-    apiKey: "AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ",
-    authDomain: "eventdb-1f7c6.firebaseapp.com",
-    databaseURL: "https://eventdb-1f7c6.firebaseio.com",
-    storageBucket: "eventdb-1f7c6.appspot.com",
-    messagingSenderId: "330315538394"
-};
-firebase.initializeApp(config);
-var db = firebase.database();
-var events = [];
-
 // init map callback for google maps api
 function initMap() {
     // create map object using google maps api method
@@ -60,50 +48,87 @@ function initMap() {
 // function to add multiple markers from search response
 // resultData will be array of objects in format:
 // [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
-function showResults(resultData) {
-    console.log(resultData);
-    // loop through result data array
-    for (var i = 0; i < resultData.length; i++) {
-        // create InfoWindow
-        var thisWindow = new google.maps.InfoWindow({
-            content: ''
-        })
-    }
-}
+
+function showEvents(resultData) { 
+
+    // resultData should be an array of event objects
+      console.log(resultData.length);
+    for (var i=0;i<resultData.length;i++) {
+      var thisEvent = resultData[i];
+      
+      // does image exist? put some html around it
+      if (thisEvent.image != '')
+          thisEvent.image = '<p><img class="infoWindowImg" src="'+thisEvent.image+'"/></p>';
+
+      // create infoWindow
+      var markerInfo = new google.maps.InfoWindow({
+        content: '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
+            thisEvent.image+
+            '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
+            '<p><span class="leadin">Start time:</span> '+thisEvent.startTime+'</span></p>'+
+            '<p><span class="leadin">Stop time:</span> '+thisEvent.stopTime+'</span></p>'+
+            '<p><span class="leadin">More info:</span></p><p class="description">'+thisEvent.description+'</p>'+
+            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">More info and tickets</a></p>'+
+            '</div>'
+          }); // end markerInfo object
+
+
+
+// get position and add marker by geocoding the address string
+      geocode(thisEvent.address,markerInfo);
+    } // end results loop
+} // end show events function
 
 // pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
-function addMarker(pos, markerInfo) {
+function addMarker(pos,windowInfo){
     var marker = new google.maps.Marker({
         position: pos,
         map: map
     });
     // put listener on this marker to open the marker info in an infowindow
     marker.addListener('click', function() {
-        markerInfo.open(map, this);
-    });
-}
+   	windowInfo.open(map, this);
+  	});
+  }
 
 // this code is straight from google API documentation, for handling errors that occur during attempted browser geolocation
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?
-        'Error: The Geolocation service failed.' :
-        'Error: Your browser doesn\'t support geolocation.');
+      'Error: The Geolocation service failed.' :
+      'Error: Your browser doesn\'t support geolocation.');
+  }
+
+
+// gets stringy address, returns {lat,lng} object in latLngCallback function
+function geocode(address,info){
+  // API call to google geocoding service - takes address (encoded) and api key
+  var urlQuery = 'https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURI(address)+'&key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ';
+  $.ajax({
+    url: urlQuery,
+    method: 'GET'
+  }).done(function(response){
+    addMarker(response.results[0].geometry.location,info);
+  });
 }
 
-$(document).ready(function() {
+// document ready statements here
+$(document).ready(function(){
 
-    // testing geocode function
-    var address = '23 Woods Bay Road, Bluffton SC';
-    var myInfo = new google.maps.InfoWindow({
-        content: '<h2>My house</h2>'
-    });
-
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ",
+    authDomain: "eventdb-1f7c6.firebaseapp.com",
+    databaseURL: "https://eventdb-1f7c6.firebaseio.com",
+    storageBucket: "eventdb-1f7c6.appspot.com",
+    messagingSenderId: "330315538394"
+};
+firebase.initializeApp(config);
+var db = firebase.database();
+var events = [];
 
     $("#eventTester").on("click", function() {
         // restaurant ajax stuff here
-
-
 
         var oArgs = {
 
@@ -123,7 +148,6 @@ $(document).ready(function() {
 
         };
 
-
         events = [];
 
 
@@ -133,51 +157,53 @@ $(document).ready(function() {
             let address = '';
             let eventsArr = oData.events.event;
 
-            for (var i in eventsArr) {
+    for (var i in eventsArr) {
 
-                position = {
-                    lat: parseFloat(eventsArr[i].latitude),
-                    lng: parseFloat(eventsArr[i].longitude)
-                }
+          position = {
+           lat: parseFloat(eventsArr[i].latitude),
+            lng: parseFloat(eventsArr[i].longitude)
+              }
 
-                address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+          if( eventsArr[i].description == null){
+            info = 'This is no information for this event.'
+          }
+          else{
+            info = eventsArr[i].description
+          }
+          if ( eventsArr[i].stop_time == null){
+            eventsArr[i].stop_time = 'Not provided'
+          };
+          if( eventsArr[i].image == null ){
+            imageURL = '';
+          }
+          else{
+            imageURL = eventsArr[i].image.medium.url;
+          }
+         address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
                 // console.log( position )
                 // console.log( address )
 
-
-                if (eventsArr[i].description == null) {
-                    info = 'This is no information for this event.'
-                } else {
-                    info = eventsArr[i].description
-                }
-                if (eventsArr[i].image == null) {
-                    imageURL = '';
-                } else {
-                    imageURL = eventsArr[i].image.medium.url;
-                }
-
-                events.push({
-                    name: eventsArr[i].title,
-                    location: position,
-                    address: address,
-                    description: info,
-                    url: eventsArr[i].url,
-                    image: imageURL,
-                    venue: eventsArr[i].venue_name,
-                    startTime: eventsArr[i].start_time,
-                    stopTime: eventsArr[i].stop_time
-                })
+          events.push({
+                name: eventsArr[i].title,
+                location: position,
+                address: address,
+                description: info,
+                url: eventsArr[i].url,
+                image: imageURL,
+                venue: eventsArr[i].venue_name,
+                startTime: eventsArr[i].start_time,
+                stopTime: eventsArr[i].stop_time
+            });
 
 
-            }
+    } // end for loop
+    showEvents(events);
+    console.log(events);
+      }); // end api call
 
-            console.log(events)
+ });  // end test click function
 
-        });
-
-
-    });
-    var restData = [];
+  var restData = [];
 
     $("#restTester").on("click",
         function restSearch() {
@@ -198,13 +224,12 @@ $(document).ready(function() {
                         var a = {
                             "name": results[i].restaurant.name,
                             "location": results[i].restaurant.location.address,
-                            "cost": results[i].restaurant.average_cost_for_two,
-                            "rating":results[i].restaurant.user_rating.aggregate_rating
-                        
-                    }; //!a could grow depending on additional info that we need
+                            "cost": results[i].restaurant.average_cost_for_two
+                        }; //!a could grow depending on additional info that we need
                         restData.push(a);
                     } //ends for loop
                     console.log(restData);
                 }); //ends done function
         }); //ends restSearch function
+
 }); // end doc ready
