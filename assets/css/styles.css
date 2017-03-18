@@ -12,3 +12,10 @@ body {
    overflow: hidden;
    background-color: grey;
 }
+
+/* test stuff */
+#eventTester {
+	position: absolute;
+	top: 40px;
+	left: 50px;
+}

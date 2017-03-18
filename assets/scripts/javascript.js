@@ -80,7 +80,42 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       'Error: The Geolocation service failed.' :
       'Error: Your browser doesn\'t support geolocation.');
   }
+
+$(document).ready(function(){
+
+// testing geocode function
+var address = '23 Woods Bay Road, Bluffton SC';
+var myInfo = new google.maps.InfoWindow({
+    content: '<h2>My house</h2>'
+  });
+
+// if address is not lat/lng, we need to geocode it
+geoAddress = geocode(address,function(geocodedAddress){
+  addMarker(geocodedAddress,myInfo)
+});
+
+
+}); // end doc ready
+
+// returns stringy address as {lat,lng} object
+function geocode(address,latLngCallback){
+  // API call to google geocoding service - takes address (encoded) and api key
+  var urlQuery = 'https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURI(address)+'&key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ';
+  $.ajax({
+    url: urlQuery,
+    method: 'GET'
+  }).done(function(response){
+    latLngCallback(response.results[0].geometry.location);
+  });
+}
+
+
 // to do
 // can use circle symbols of various sizes to represent popularity of restaurant (if available);
+/* test stuff   */
+
+$("#eventTester").on("click", function(){
 
 
+
+})
