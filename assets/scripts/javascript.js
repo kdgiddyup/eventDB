@@ -8,6 +8,7 @@ messagingSenderId: "330315538394"
 };
 firebase.initializeApp(config);
 var db = firebase.database();
+var events = [];
 
 // init map callback for google maps api
 function initMap(){
@@ -127,9 +128,77 @@ $("#eventTester").on("click", function(){
     // restaurant ajax stuff here
 
 
-});
 
-$("#restTester").on("click", function(){
-// restaurant ajax stuff here
+  var oArgs = {
+
+        app_key: 'GRMfQ3CqpWsGdfXM',
+
+        q: "",
+
+        where: "31401",
+
+        within: '10',
+
+        "date": "Next Week",
+
+        page_size: 10,
+
+        sort_order: "popularity",
+
+     };
+
+    
+    events = [];
+
+
+     EVDB.API.call("/events/search", oArgs, function(oData) {
+        let position = {};
+        let name, info;
+        let address = '';
+        let eventsArr = oData.events.event;
+
+        for(var i in eventsArr){
+          
+          position = {
+            lat: parseFloat( eventsArr[i].latitude ),
+            lng: parseFloat( eventsArr[i].longitude )
+          }
+
+          address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+          // console.log( position )
+          // console.log( address )
+          
+
+          if( eventsArr[i].description == null){
+            info = 'This is no information for this event.'
+          }
+          else{
+            info = eventsArr[i].description
+          }
+          if( eventsArr[i].image == null ){
+            imageURL = '';
+          }
+          else{
+            imageURL = eventsArr[i].image.medium.url;
+          }
+
+          events.push({name: eventsArr[i].title,
+                       location: position,
+                       address: address,
+                       description: info,
+                       url: eventsArr[i].url,
+                       image: imageURL,
+                       venue: eventsArr[i].venue_name,
+                       startTime: eventsArr[i].start_time,
+                       stopTime: eventsArr[i].stop_time
+                        })
+
+          
+        }
+
+        console.log( events )
+
+      });
+
 
 });
