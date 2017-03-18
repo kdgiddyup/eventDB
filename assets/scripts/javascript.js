@@ -60,26 +60,52 @@ function initMap(){
 // function to add multiple markers from search response
 // resultData will be array of objects in format:
 // [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
-function showResults(resultData) {
-	console.log(resultData);
-	// loop through result data array
-	for (var i=0;i<resultData.length;i++){
-		// create InfoWindow
-		var thisWindow = new google.maps.InfoWindow({
-			content: ''
-		})
-	}
-}
+function showEvents(resultData) { 
+    // eventInfo should be an array of event objects
+/* 
+address: "301 W. Ogelthorpe Ave., Savannah, GA"
+description: "This is no information for this event."
+image: "http://s2.evcdn.com/images/medium/I0-001/010/408/857-0.png_/the-avett-brothers-57.png"
+location:{lat,lng}
+name:"The Avett Brothers"
+startTime:"2017-03-23 20:00:00"
+stopTime:'Not provided'
+url:"http://eventful.com/savannah/events/avett-brothers-/E0-001-097837973-4?utm_source=apis&utm_medium=apim&utm_campaign=apic"
+venue:"Johnny Mercer Theatre"
+*/
+    for (var i=0;i<resultData.length;i++) {
+      var thisEvent = resultData[i];
+      
+      // does image exist? put some html around it
+      if (thisEvent.image != '')
+          thisEvent.image = '<p><img class="infoWindowImg" src="'+thisEvent.image+'"/></p>';
+       
+      // create infoWindow
+      var markerInfo = new google.maps.InfoWindow({
+        content: '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
+            thisEvent.image+
+            '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
+            '<p><span class="leadin">Start time:</span> '+thisEvent.startTime+'</span></p>'+
+            '<p><span class="leadin">Stop time:</span> '+thisEvent.stopTime+'</span></p>'+
+            '<p><span class="leadin">More info:</span></p><p class="description">'+thisEvent.description+'</p>'+
+            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">More info and tickets</a></p>'+
+            '</div>'
+          }); // end markerInfo object
+
+// get position and add marker by geocoding the address string
+      geocode(thisEvent.address,markerInfo);
+    } // end results loop
+} // end show events function
 
 // pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
-function addMarker(pos,markerInfo){
+function addMarker(pos,windowInfo){
     var marker = new google.maps.Marker({
       position: pos,
       map: map
     });
     // put listener on this marker to open the marker info in an infowindow
     marker.addListener('click', function() {
-    	markerInfo.open(map, this);
+    	windowInfo.open(map, this);
   	});
     }
 
@@ -92,30 +118,20 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   }
 
 $(document).ready(function(){
-
-// testing geocode function
-var address = '23 Woods Bay Road, Bluffton SC';
-var myInfo = new google.maps.InfoWindow({
-    content: '<h2>My house</h2>'
-  });
-
-// if address is not lat/lng, we need to geocode it
-geoAddress = geocode(address,function(geocodedAddress){
-  addMarker(geocodedAddress,myInfo)
-});
+// here is doc ready area for future use
 
 
 }); // end doc ready
 
-// returns stringy address as {lat,lng} object
-function geocode(address,latLngCallback){
+// gets stringy address, returns {lat,lng} object in latLngCallback function
+function geocode(address,info){
   // API call to google geocoding service - takes address (encoded) and api key
   var urlQuery = 'https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURI(address)+'&key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ';
   $.ajax({
     url: urlQuery,
     method: 'GET'
   }).done(function(response){
-    latLngCallback(response.results[0].geometry.location);
+    addMarker(response.results[0].geometry.location,info);
   });
 }
 
@@ -125,33 +141,24 @@ function geocode(address,latLngCallback){
 /* test stuff   */
 
 $("#eventTester").on("click", function(){
-    // restaurant ajax stuff here
-
-
-
+    // code by T Dusterdieck
+    //event ajax stuff here
   var oArgs = {
-
         app_key: 'GRMfQ3CqpWsGdfXM',
-
         q: "",
-
         where: "31401",
-
         within: '10',
-
+        // we'll eventually pass in the user specified date
         "date": "Next Week",
-
+        // limit results
         page_size: 10,
-
+        // we'll use this to size markers
         sort_order: "popularity",
-
      };
-
     
     events = [];
 
-
-     EVDB.API.call("/events/search", oArgs, function(oData) {
+    EVDB.API.call("/events/search", oArgs, function(oData) {
         let position = {};
         let name, info;
         let address = '';
@@ -175,6 +182,8 @@ $("#eventTester").on("click", function(){
           else{
             info = eventsArr[i].description
           }
+          if ( eventsArr[i].stop_time == null)
+            eventsArr[i].stop_time = 'Not provided';
           if( eventsArr[i].image == null ){
             imageURL = '';
           }
@@ -193,12 +202,14 @@ $("#eventTester").on("click", function(){
                        stopTime: eventsArr[i].stop_time
                         })
 
-          
         }
 
-        console.log( events )
+      // kelly added:
+      showEvents(events);
 
-      });
+      console.log( events )
+
+      }); // end api call
 
 
-});
+}); // end event button test
