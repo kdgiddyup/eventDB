@@ -116,6 +116,8 @@ function geocode(address,latLngCallback){
 /* test stuff   */
 
 $("#eventTester").on("click", function(){
+    // restaurant ajax stuff here
+
 
 
   var oArgs = {
@@ -190,4 +192,5 @@ $("#eventTester").on("click", function(){
       });
 
 
-})
+});
+
