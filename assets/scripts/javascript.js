@@ -8,6 +8,7 @@ var config = {
 };
 firebase.initializeApp(config);
 var db = firebase.database();
+var events = [];
 
 // init map callback for google maps api
 function initMap() {
@@ -21,20 +22,29 @@ function initMap() {
     // we want to attempt to center the map at the user's present location
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
+
         navigator.geolocation.getCurrentPosition(function(position) {
             // create geolocation object of user's position
             var userPos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             };
-            // for map center, offset longitude to push map to right
+            // on wider screens, offset longitude to push map to right
+            if (window.innerWidth > 1000) {
+                var lngOffset = .5
+                var latOffset = -.2;
+            } else {
+                var lngOffset = 0;
+                var latOffset = .2;
+            }
             var mapCenter = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude - .6
+                lat: position.coords.latitude + latOffset,
+                lng: position.coords.longitude - lngOffset
             };
 
             // send user position to addMarker function
-            addMarker(userPos, infoWindow);
+            // don't actually need a user location marker; the map will be centered near them. 
+            //addMarker(userPos,infoWindow);
 
             // update map object with new center location
             map.setCenter(mapCenter);
@@ -89,32 +99,81 @@ $(document).ready(function() {
         content: '<h2>My house</h2>'
     });
 
-    // if address is not lat/lng, we need to geocode it
-    geoAddress = geocode(address, function(geocodedAddress) {
-        addMarker(geocodedAddress, myInfo)
-    });
-
-
-
-    // returns stringy address as {lat,lng} object
-    function geocode(address, latLngCallback) {
-        // API call to google geocoding service - takes address (encoded) and api key
-        var urlQuery = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURI(address) + '&key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ';
-        $.ajax({
-            url: urlQuery,
-            method: 'GET'
-        }).done(function(response) {
-            latLngCallback(response.results[0].geometry.location);
-        });
-    }
-
-
-    // to do
-    // can use circle symbols of various sizes to represent popularity of restaurant (if available);
-    /* test stuff   */
 
     $("#eventTester").on("click", function() {
+        // restaurant ajax stuff here
 
+
+
+        var oArgs = {
+
+            app_key: 'GRMfQ3CqpWsGdfXM',
+
+            q: "",
+
+            where: "31401",
+
+            within: '10',
+
+            "date": "Next Week",
+
+            page_size: 10,
+
+            sort_order: "popularity",
+
+        };
+
+
+        events = [];
+
+
+        EVDB.API.call("/events/search", oArgs, function(oData) {
+            let position = {};
+            let name, info;
+            let address = '';
+            let eventsArr = oData.events.event;
+
+            for (var i in eventsArr) {
+
+                position = {
+                    lat: parseFloat(eventsArr[i].latitude),
+                    lng: parseFloat(eventsArr[i].longitude)
+                }
+
+                address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+                // console.log( position )
+                // console.log( address )
+
+
+                if (eventsArr[i].description == null) {
+                    info = 'This is no information for this event.'
+                } else {
+                    info = eventsArr[i].description
+                }
+                if (eventsArr[i].image == null) {
+                    imageURL = '';
+                } else {
+                    imageURL = eventsArr[i].image.medium.url;
+                }
+
+                events.push({
+                    name: eventsArr[i].title,
+                    location: position,
+                    address: address,
+                    description: info,
+                    url: eventsArr[i].url,
+                    image: imageURL,
+                    venue: eventsArr[i].venue_name,
+                    startTime: eventsArr[i].start_time,
+                    stopTime: eventsArr[i].stop_time
+                })
+
+
+            }
+
+            console.log(events)
+
+        });
 
 
     });
