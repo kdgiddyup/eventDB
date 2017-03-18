@@ -200,7 +200,8 @@ $(document).ready(function() {
                             "location": results[i].restaurant.location.address,
                             "cost": results[i].restaurant.average_cost_for_two,
                             "rating":results[i].restaurant.user_rating.aggregate_rating
-                        }; //!a could grow depending on additional info that we need
+                        
+                    }; //!a could grow depending on additional info that we need
                         restData.push(a);
                     } //ends for loop
                     console.log(restData);
