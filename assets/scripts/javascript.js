@@ -115,7 +115,12 @@ function geocode(address,latLngCallback){
 /* test stuff   */
 
 $("#eventTester").on("click", function(){
+    // restaurant ajax stuff here
 
 
+});
 
-})
+$("#restTester").on("click", function(){
+// restaurant ajax stuff here
+
+}
