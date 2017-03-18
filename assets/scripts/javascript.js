@@ -27,14 +27,23 @@ function initMap(){
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
-        // for map center, offset longitude to push map to right
+        // on wider screens, offset longitude to push map to right
+        if (window.innerWidth > 1000) {
+          var lngOffset = .5
+          var latOffset = -.2;
+        }
+        else {
+          var lngOffset = 0;
+          var latOffset = .2;
+        }
         var mapCenter = {
-        	lat: position.coords.latitude,
-         	lng: position.coords.longitude-.6
+        	lat: position.coords.latitude+latOffset,
+         	lng: position.coords.longitude-lngOffset
         };
 
         // send user position to addMarker function
-		addMarker(userPos,infoWindow);
+		   // don't actually need a user location marker; the map will be centered near them. 
+       //addMarker(userPos,infoWindow);
 
         // update map object with new center location
         map.setCenter(mapCenter);
@@ -123,4 +132,4 @@ $("#eventTester").on("click", function(){
 $("#restTester").on("click", function(){
 // restaurant ajax stuff here
 
-}
+});
