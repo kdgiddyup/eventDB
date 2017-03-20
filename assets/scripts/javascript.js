@@ -1,5 +1,5 @@
 // init map callback for google maps api
-//this function needed 45 lines to execute, maybe think about your phrasing;
+//removed;
 function initMap() {
     // create map object using google maps api method2
     map = new google.maps.Map(document.getElementById('map'), {
