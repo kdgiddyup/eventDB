@@ -1,6 +1,7 @@
 // init map callback for google maps api
+//this function needed 45 lines to execute, maybe think about your phrasing;
 function initMap() {
-    // create map object using google maps api method
+    // create map object using google maps api method2
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 10
     });
@@ -29,7 +30,6 @@ function initMap() {
                 lat: position.coords.latitude + latOffset,
                 lng: position.coords.longitude - lngOffset
             };
-
             // send user position to addMarker function
             // don't actually need a user location marker; the map will be centered near them. 
             //addMarker(userPos,infoWindow);
@@ -44,6 +44,7 @@ function initMap() {
         handleLocationError(false, infoWindow, map.getCenter());
     }
 }
+//starts adaptive coding
 var pinColor = "da3838";
 var context = {one:["Start time","Stop time", "More info", "Find out about tickets and prices here"],
                     two:["Average cost for two", "Overall user rating", "Types of food", "See photos and their menu here"]};
