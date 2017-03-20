@@ -99,6 +99,9 @@ function showEvents(resultData) {
             '<p><span class="leadin">More info:</span></p><p class="description">'+thisEvent.description+'</p>'+
             '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">More info and tickets</a></p>'+
             '</div>'
+<<<<<<< HEAD
+>>>>>>> master
+=======
 >>>>>>> master
           }); // end markerInfo object
 
@@ -106,7 +109,11 @@ function showEvents(resultData) {
 
 // get position and add marker by geocoding the address string
 <<<<<<< HEAD
+<<<<<<< HEAD
       geocode(thisEvent.address,markerInfo);//line 111
+=======
+      geocode(thisEvent.address,markerInfo);
+>>>>>>> master
 =======
       geocode(thisEvent.address,markerInfo);
 >>>>>>> master
@@ -116,10 +123,13 @@ function showEvents(resultData) {
 // pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
 function addMarker(pos,windowInfo){
 <<<<<<< HEAD
+<<<<<<< HEAD
         var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
         new google.maps.Size(21, 34),
         new google.maps.Point(0,0),
         new google.maps.Point(10, 34));
+=======
+>>>>>>> master
 =======
 >>>>>>> master
     var marker = new google.maps.Marker({
@@ -151,7 +161,11 @@ function geocode(address,info){
     method: 'GET'
   }).done(function(response){
 <<<<<<< HEAD
+<<<<<<< HEAD
     addMarker(response.results[0].geometry.location,info);//line 85
+=======
+    addMarker(response.results[0].geometry.location,info);
+>>>>>>> master
 =======
     addMarker(response.results[0].geometry.location,info);
 >>>>>>> master
@@ -175,7 +189,11 @@ var events = [];
 
     $("#eventTester").on("click", function() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+        // restaurant ajax stuff here
+>>>>>>> master
 =======
         // restaurant ajax stuff here
 >>>>>>> master
@@ -213,6 +231,7 @@ var events = [];
            lat: parseFloat(eventsArr[i].latitude),
             lng: parseFloat(eventsArr[i].longitude)
 <<<<<<< HEAD
+<<<<<<< HEAD
               };
 
           if( eventsArr[i].description === null){
@@ -226,6 +245,8 @@ var events = [];
           }
           if( eventsArr[i].image === null ){
 =======
+=======
+>>>>>>> master
               }
 
           if( eventsArr[i].description == null){
@@ -238,6 +259,9 @@ var events = [];
             eventsArr[i].stop_time = 'Not provided'
           };
           if( eventsArr[i].image == null ){
+<<<<<<< HEAD
+>>>>>>> master
+=======
 >>>>>>> master
             imageURL = '';
           }
@@ -246,6 +270,11 @@ var events = [];
           }
          address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                // console.log( position )
+                // console.log( address )
+>>>>>>> master
 =======
                 // console.log( position )
                 // console.log( address )
@@ -267,6 +296,10 @@ var events = [];
     } // end for loop
     showEvents(events);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    console.log(events);
+>>>>>>> master
 =======
     console.log(events);
 >>>>>>> master
@@ -275,7 +308,10 @@ var events = [];
  });  // end test click function
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //declared globally for passing into other functions
+=======
+>>>>>>> master
 =======
 >>>>>>> master
   var restData = [];
@@ -313,7 +349,11 @@ var events = [];
         }); //ends restSearch function
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 }); // end doc ready
+=======
+}); // end doc ready
+>>>>>>> master
 =======
 }); // end doc ready
 >>>>>>> master
