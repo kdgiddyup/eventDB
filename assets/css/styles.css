@@ -14,9 +14,6 @@ body {
     background-color: grey;
 }
 
-
-/* test stuff */
-
 #eventTester {
 	position: absolute;
 	top: 40px;
@@ -29,9 +26,5 @@ body {
     left: 50px;
 }
 .leadin {
-<<<<<<< HEAD
 	font-weight: bold;
 }
-=======
-	font-weight: bold;
->>>>>>> master
