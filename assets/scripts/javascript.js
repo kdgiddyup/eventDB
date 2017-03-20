@@ -49,6 +49,7 @@ var pinColor = "da3838";
 var context = {one:["Start time","Stop time", "More info", "Find out about tickets and prices here"],
                     two:["Average cost for two", "Overall user rating", "Types of food", "See photos and their menu here"]};
 // function to add multiple markers from search response
+<<<<<<< HEAD
 function showEvents(resultData,controller) { 
     //controller is used to switch text in context object and pin color        
     pinColor = "da3838";
@@ -73,21 +74,54 @@ function showEvents(resultData,controller) {
             '<p><span class="leadin">'+txt[1]+':</span> '+thisEvent.stopTime+'</span></p>'+
             '<p><span class="leadin">'+txt[2]+':</span></p><p class="description">'+thisEvent.description+'</p>'+
             '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">'+txt[3]+'</a></p>'+'</div>'
+=======
+// resultData will be array of objects in format:
+// [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
+
+function showEvents(resultData) { 
+
+    // resultData should be an array of event objects
+      console.log(resultData.length);
+    for (var i=0;i<resultData.length;i++) {
+      var thisEvent = resultData[i];
+      
+      // does image exist? put some html around it
+      if (thisEvent.image != '')
+          thisEvent.image = '<p><img class="infoWindowImg" src="'+thisEvent.image+'"/></p>';
+
+      // create infoWindow
+      var markerInfo = new google.maps.InfoWindow({
+        content: '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
+            thisEvent.image+
+            '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
+            '<p><span class="leadin">Start time:</span> '+thisEvent.startTime+'</span></p>'+
+            '<p><span class="leadin">Stop time:</span> '+thisEvent.stopTime+'</span></p>'+
+            '<p><span class="leadin">More info:</span></p><p class="description">'+thisEvent.description+'</p>'+
+            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">More info and tickets</a></p>'+
+            '</div>'
+>>>>>>> master
           }); // end markerInfo object
 
 
 
 // get position and add marker by geocoding the address string
+<<<<<<< HEAD
       geocode(thisEvent.address,markerInfo);//line 111
+=======
+      geocode(thisEvent.address,markerInfo);
+>>>>>>> master
     } // end results loop
 } // end show events function
 
 // pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
 function addMarker(pos,windowInfo){
+<<<<<<< HEAD
         var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
         new google.maps.Size(21, 34),
         new google.maps.Point(0,0),
         new google.maps.Point(10, 34));
+=======
+>>>>>>> master
     var marker = new google.maps.Marker({
         position: pos,
         map: map,
@@ -116,7 +150,11 @@ function geocode(address,info){
     url: urlQuery,
     method: 'GET'
   }).done(function(response){
+<<<<<<< HEAD
     addMarker(response.results[0].geometry.location,info);//line 85
+=======
+    addMarker(response.results[0].geometry.location,info);
+>>>>>>> master
   });
 }
 
@@ -136,7 +174,11 @@ var db = firebase.database();
 var events = [];
 
     $("#eventTester").on("click", function() {
+<<<<<<< HEAD
 
+=======
+        // restaurant ajax stuff here
+>>>>>>> master
 
         var oArgs = {
 
@@ -170,6 +212,7 @@ var events = [];
           position = {
            lat: parseFloat(eventsArr[i].latitude),
             lng: parseFloat(eventsArr[i].longitude)
+<<<<<<< HEAD
               };
 
           if( eventsArr[i].description === null){
@@ -182,12 +225,31 @@ var events = [];
             eventsArr[i].stop_time = 'Not provided';
           }
           if( eventsArr[i].image === null ){
+=======
+              }
+
+          if( eventsArr[i].description == null){
+            info = 'This is no information for this event.'
+          }
+          else{
+            info = eventsArr[i].description
+          }
+          if ( eventsArr[i].stop_time == null){
+            eventsArr[i].stop_time = 'Not provided'
+          };
+          if( eventsArr[i].image == null ){
+>>>>>>> master
             imageURL = '';
           }
           else{
             imageURL = eventsArr[i].image.medium.url;
           }
          address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+<<<<<<< HEAD
+=======
+                // console.log( position )
+                // console.log( address )
+>>>>>>> master
 
           events.push({
                 name: eventsArr[i].title,
@@ -204,11 +266,18 @@ var events = [];
 
     } // end for loop
     showEvents(events);
+<<<<<<< HEAD
+=======
+    console.log(events);
+>>>>>>> master
       }); // end api call
 
  });  // end test click function
 
+<<<<<<< HEAD
 //declared globally for passing into other functions
+=======
+>>>>>>> master
   var restData = [];
 
     $("#restTester").on("click",
@@ -243,4 +312,8 @@ var events = [];
                 }); //ends done function
         }); //ends restSearch function
 
+<<<<<<< HEAD
 }); // end doc ready
+=======
+}); // end doc ready
+>>>>>>> master
