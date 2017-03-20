@@ -1,6 +1,7 @@
 // init map callback for google maps api
+//removed;
 function initMap() {
-    // create map object using google maps api method
+    // create map object using google maps api method2
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 10
     });
@@ -19,17 +20,16 @@ function initMap() {
             };
             // on wider screens, offset longitude to push map to right
             if (window.innerWidth > 1000) {
-                var lngOffset = .5
-                var latOffset = -.2;
+                lngOffset = 0.5;
+                latOffset = -0.2;
             } else {
-                var lngOffset = 0;
-                var latOffset = .2;
+                lngOffset = 0;
+                latOffset = 0.2;
             }
             var mapCenter = {
                 lat: position.coords.latitude + latOffset,
                 lng: position.coords.longitude - lngOffset
             };
-
             // send user position to addMarker function
             // don't actually need a user location marker; the map will be centered near them. 
             //addMarker(userPos,infoWindow);
@@ -44,8 +44,37 @@ function initMap() {
         handleLocationError(false, infoWindow, map.getCenter());
     }
 }
-
+//starts adaptive coding
+var pinColor = "da3838";
+var context = {one:["Start time","Stop time", "More info", "Find out about tickets and prices here"],
+                    two:["Average cost for two", "Overall user rating", "Types of food", "See photos and their menu here"]};
 // function to add multiple markers from search response
+<<<<<<< HEAD
+function showEvents(resultData,controller) { 
+    //controller is used to switch text in context object and pin color        
+    pinColor = "da3838";
+    var txt = context.one;
+    if (controller === 1){
+    pinColor = "1a7d1a";
+    txt = context.two;
+    }
+    // resultData should be an array of event objects
+    for (var i=0;i<resultData.length;i++) {
+      var thisEvent = resultData[i];
+            // does image exist? put some html around it
+      if (thisEvent.image !== '')
+          thisEvent.image = '<p><img class="infoWindowImg" src="'+thisEvent.image+'"/></p>';
+      // create infoWindow
+      var markerInfo = new google.maps.InfoWindow({
+        //the txt variable allows us to reuse this function but with different text
+        content: '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
+            thisEvent.image+
+            '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
+            '<p><span class="leadin">'+txt[0]+':</span> '+thisEvent.startTime+'</span></p>'+
+            '<p><span class="leadin">'+txt[1]+':</span> '+thisEvent.stopTime+'</span></p>'+
+            '<p><span class="leadin">'+txt[2]+':</span></p><p class="description">'+thisEvent.description+'</p>'+
+            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">'+txt[3]+'</a></p>'+'</div>'
+=======
 // resultData will be array of objects in format:
 // [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
 
@@ -70,20 +99,43 @@ function showEvents(resultData) {
             '<p><span class="leadin">More info:</span></p><p class="description">'+thisEvent.description+'</p>'+
             '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">More info and tickets</a></p>'+
             '</div>'
+<<<<<<< HEAD
+>>>>>>> master
+=======
+>>>>>>> master
           }); // end markerInfo object
 
 
 
 // get position and add marker by geocoding the address string
+<<<<<<< HEAD
+<<<<<<< HEAD
+      geocode(thisEvent.address,markerInfo);//line 111
+=======
       geocode(thisEvent.address,markerInfo);
+>>>>>>> master
+=======
+      geocode(thisEvent.address,markerInfo);
+>>>>>>> master
     } // end results loop
 } // end show events function
 
 // pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
 function addMarker(pos,windowInfo){
+<<<<<<< HEAD
+<<<<<<< HEAD
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+=======
+>>>>>>> master
+=======
+>>>>>>> master
     var marker = new google.maps.Marker({
         position: pos,
-        map: map
+        map: map,
+        icon: pinImage
     });
     // put listener on this marker to open the marker info in an infowindow
     marker.addListener('click', function() {
@@ -108,7 +160,15 @@ function geocode(address,info){
     url: urlQuery,
     method: 'GET'
   }).done(function(response){
+<<<<<<< HEAD
+<<<<<<< HEAD
+    addMarker(response.results[0].geometry.location,info);//line 85
+=======
     addMarker(response.results[0].geometry.location,info);
+>>>>>>> master
+=======
+    addMarker(response.results[0].geometry.location,info);
+>>>>>>> master
   });
 }
 
@@ -128,7 +188,15 @@ var db = firebase.database();
 var events = [];
 
     $("#eventTester").on("click", function() {
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
         // restaurant ajax stuff here
+>>>>>>> master
+=======
+        // restaurant ajax stuff here
+>>>>>>> master
 
         var oArgs = {
 
@@ -162,6 +230,23 @@ var events = [];
           position = {
            lat: parseFloat(eventsArr[i].latitude),
             lng: parseFloat(eventsArr[i].longitude)
+<<<<<<< HEAD
+<<<<<<< HEAD
+              };
+
+          if( eventsArr[i].description === null){
+            info = 'This is no information for this event.';
+          }
+          else{
+            info = eventsArr[i].description;
+          }
+          if ( eventsArr[i].stop_time === null){
+            eventsArr[i].stop_time = 'Not provided';
+          }
+          if( eventsArr[i].image === null ){
+=======
+=======
+>>>>>>> master
               }
 
           if( eventsArr[i].description == null){
@@ -174,14 +259,26 @@ var events = [];
             eventsArr[i].stop_time = 'Not provided'
           };
           if( eventsArr[i].image == null ){
+<<<<<<< HEAD
+>>>>>>> master
+=======
+>>>>>>> master
             imageURL = '';
           }
           else{
             imageURL = eventsArr[i].image.medium.url;
           }
          address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
                 // console.log( position )
                 // console.log( address )
+>>>>>>> master
+=======
+                // console.log( position )
+                // console.log( address )
+>>>>>>> master
 
           events.push({
                 name: eventsArr[i].title,
@@ -198,11 +295,25 @@ var events = [];
 
     } // end for loop
     showEvents(events);
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
     console.log(events);
+>>>>>>> master
+=======
+    console.log(events);
+>>>>>>> master
       }); // end api call
 
  });  // end test click function
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+//declared globally for passing into other functions
+=======
+>>>>>>> master
+=======
+>>>>>>> master
   var restData = [];
 
     $("#restTester").on("click",
@@ -223,14 +334,26 @@ var events = [];
                     for (var i = 0; i < results.length; i++) {
                         var a = {
                             "name": results[i].restaurant.name,
-                            "location": results[i].restaurant.location.address,
-                            "cost": results[i].restaurant.average_cost_for_two,
-                            "rating":results[i].restaurant.user_rating.aggregate_rating
-                        }; //!a could grow depending on additional info that we need
+                            "address": results[i].restaurant.location.address, 
+                            "startTime": results[i].restaurant.average_cost_for_two,
+                            "stopTime": results[i].restaurant.user_rating.aggregate_rating,
+                            "description":results[i].restaurant.cuisines,
+                            "image":results[i].restaurant.thumb,
+                            "url":results[i].restaurant.url,
+                    }; //!a could grow depending on additional info that we need
                         restData.push(a);
                     } //ends for loop
                     console.log(restData);
+                showEvents(restData, 1);
                 }); //ends done function
         }); //ends restSearch function
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 }); // end doc ready
+=======
+}); // end doc ready
+>>>>>>> master
+=======
+}); // end doc ready
+>>>>>>> master
