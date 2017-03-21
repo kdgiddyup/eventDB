@@ -341,6 +341,10 @@ var events = [];
     $("#submitButton").on("click", function(event) {
         event.preventDefault();
 
+        // get search radius value
+        var radius = String( $("#radiusSelect").val() );
+        console.log('radius: '+radius);
+
         // check for required fields
         var inputs =[];
         
@@ -380,7 +384,7 @@ var events = [];
 
             where: where,
 
-            within: '5',
+            within: radius,
 
             date: when+'-'+when,
 
@@ -406,10 +410,12 @@ var events = [];
                     info = 'This is no information for this event.';
                   }
                   else if (eventsArr[i].description.length > 250){
-
+                    console.log(eventsArr[i].title+ ' Desc:' +  eventsArr[i].description) ;
+                    console.log('---------------------------------------');
                     info = '<span class="teaser">' + eventsArr[i].description.substring(0, 250) + '</span>' +
                            '<span class="complete">' + eventsArr[i].description + '</span>' +
                            '<span class="more"> More>>></span>';
+                    
                     // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
                     // console.log(eventsArr[i].description.substring(0, 250).length)
                    }

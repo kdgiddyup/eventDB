@@ -39,6 +39,13 @@
 				<p>When's the big night?</p>
 				<div><input data-required="required" type="date" id="inputDate"/></div>
 				<div><input data-required="" id="submitButton" type="submit" value="Your night awaits"></div>
+				<select id="radiusSelect" placeholder="Search radius">
+					<option type="radiusOption" value="1">1</option>
+					<option type="radiusOption" value="5">5</option>
+					<option selected="selected" type="radiusOption" value="10">10</option>
+					<option type="radiusOption" value="20">20</option>
+					<option type="radiusOption" value="30">30</option>
+				</select>
 			</form>
 			
 			<div id="eventOutput"></div>
