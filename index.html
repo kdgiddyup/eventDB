@@ -14,10 +14,22 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<!-- marker clusterer library -->
 		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
-	    
+	    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ"></script>
 	    <link href="assets/css/styles.css" type="text/css" rel="stylesheet">
    		<script type="text/javascript" src="http://api.eventful.com/js/api"></script>
-		<script src="assets/scripts/javascript.js" type="text/javascript"></script> 
+		<style>
+			.complete{
+			    display: none;
+			}
+
+			.more{
+			    background:lightblue;
+			    color:navy;
+			    font-size:13px;
+			    padding:3px;
+			    cursor:pointer;
+			}
+		</style>
 	  <title>A night out in [you are here], powered by FBM</title>
 	 </head>
 	 <body>
@@ -36,7 +48,10 @@
 
 
 		<!-- keep this script at the bottom, above <body> tag -->
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ&callback=initMap"></script>
+		
+		
+		<script defer src="assets/scripts/spiderfy.js" type="text/javascript"></script>
+		<script src="assets/scripts/javascript.js" type="text/javascript"></script>
 		<!-- script type="text/javascript" src="assets/scripts/spiderfy.js"></script -->
 		<!-- script type="text/javascript">omsInit();</script-->
 

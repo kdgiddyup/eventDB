@@ -1,82 +1,105 @@
 // init map callback for google maps api
 //removed ;
-function initMap() {
-    // create map object using google maps api method2
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 11,
-        mapTypeControlOptions: {
-          style: google.maps.MapTypeControlStyle.DEFAULT,
-          mapTypeIds: ['roadmap', 'terrain','hybrid','satellite']
-          },
-        fullscreenControl: true,
-        styles: [
-          {
-            featureType: 'all',
+
+window.onload = function() {
+  
+  
+  // oms.addListener('click', function(marker) {
+  //   iw.setContent(marker.desc);
+  //   iw.open(map, marker);
+  // });
+
+  // var bounds = new gm.LatLngBounds();
+
+
+
+
+
+
+  // function initMap() {
+      // create map object using google maps api method2
+      gm = google.maps;
+      map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 11,
+          mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DEFAULT,
+            mapTypeIds: ['roadmap', 'terrain','hybrid','satellite']
+            },
+          fullscreenControl: true,
+          styles: [
+            {
+              featureType: 'all',
+              stylers: [
+                { saturation: -80 }
+              ]
+            },
+            {
+            featureType: 'road.arterial',
+            elementType: 'geometry',
             stylers: [
-              { saturation: -80 }
+              { hue: '#00ffee' },
+              { saturation: 50 }
             ]
-          },
-          {
-          featureType: 'road.arterial',
-          elementType: 'geometry',
-          stylers: [
-            { hue: '#00ffee' },
-            { saturation: 50 }
-          ]
-          },
-          {
-          featureType: 'poi.business',
-          elementType: 'labels',                                                                                  
-          stylers: [
-            { visibility: 'off' }                                                                                                                  
-          ]
-          }
-          ] // end styles array
-
-    }); // end initMap
-
-      // add click event to marker to open info window
-    infowindow = new google.maps.InfoWindow({
-        maxWidth: 300
-      });
-
-   // we want to attempt to center the map at the user's present location
-    // Try HTML5 geolocation.
-    if (navigator.geolocation) {
-
-        navigator.geolocation.getCurrentPosition(function(position) {
-            // create geolocation object of user's position
-            userPos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-            // on wider screens, offset longitude to push map to right
-            if (window.innerWidth > 1000) {
-                var lngOffset = .2;
-                var latOffset = -.1;
-            } else {
-                var lngOffset = .1;
-                var latOffset = -.1;
+            },
+            {
+            featureType: 'poi.business',
+            elementType: 'labels',                                                                                  
+            stylers: [
+              { visibility: 'off' }                                                                                                                  
+            ]
             }
-            var mapCenter = {
-                lat: position.coords.latitude + latOffset,
-                lng: position.coords.longitude - lngOffset
-            };
-            // send user position to addMarker function
-            // don't actually need a user location marker; the map will be centered near them. 
-            //addMarker(userPos,infoWindow);
+            ] // end styles array
 
-            // update map object with new center location
-            map.setCenter(mapCenter);
-        }, function() {
-            handleLocationError(true, infoWindow, map.getCenter());
+      }); // end initMap
+
+      oms = new OverlappingMarkerSpiderfier(map,
+                  {markersWontMove: true, markersWontHide: true});
+
+        // add click event to marker to open info window
+      infowindow = new google.maps.InfoWindow({
+          maxWidth: 300
         });
-    } else {
-        // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
-    }
+      iw = infowindow;
+      
 
-}
+     // we want to attempt to center the map at the user's present location
+      // Try HTML5 geolocation.
+      if (navigator.geolocation) {
+
+          navigator.geolocation.getCurrentPosition(function(position) {
+              // create geolocation object of user's position
+              userPos = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+              };
+              // on wider screens, offset longitude to push map to right
+              if (window.innerWidth > 1000) {
+                  var lngOffset = .2;
+                  var latOffset = -.1;
+              } else {
+                  var lngOffset = .1;
+                  var latOffset = -.1;
+              }
+              var mapCenter = {
+                  lat: position.coords.latitude + latOffset,
+                  lng: position.coords.longitude - lngOffset
+              };
+              // send user position to addMarker function
+              // don't actually need a user location marker; the map will be centered near them. 
+              //addMarker(userPos,infoWindow);
+
+              // update map object with new center location
+              map.setCenter(mapCenter);
+          }, function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+          });
+      } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+      }
+
+  }//end window.onload
+
 /***** start of Patrick code *********
 
 //starts adaptive coding
@@ -123,6 +146,8 @@ function showEvents(resultData,controller) {
       if (thisEvent.image !== '')
           thisEvent.image = '<p><img class="infoWindowImg" src="'+thisEvent.image+'"/></p>';
       // create infoWindow
+
+
       var markerInfo = '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
             thisEvent.image+
             '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
@@ -146,7 +171,7 @@ function showEvents(resultData,controller) {
 ************************************************************/
 
 // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
-    geocode(thisEvent.address,markerInfo,eventMarkers, type);
+    geocode (thisEvent.address, markerInfo, eventMarkers, type);
    
    // display events in HTML
     var eventBlock = $("<div>").addClass('outputBlock');
@@ -195,7 +220,7 @@ function showRestaurants(resultData) {
 
 
 // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
-    geocode(thisRestaurant.location,markerInfo,restaurantMarkers, type);
+    geocode( thisRestaurant.location, markerInfo, restaurantMarkers, type);
 
 
     // display restaurants in HTML
@@ -253,15 +278,22 @@ function addMarker(pos,windowInfo){
     });
 ************************************************************/
     // clicking on marker opens info window
-      marker.addListener('click', function() {
-         // update infowindow content
-        infowindow.setContent(marker.desc);
-        infowindow.open(map, marker);
-        });
+      // marker.addListener('click', function() {
+      //    // update infowindow content
+      //   infowindow.setContent(marker.desc);
+      //   infowindow.open(map, marker);
+      //   });
+
+      //spiderfier event listerners
+      oms.addListener('click', function(marker) {
+        iw.setContent(marker.desc);
+        iw.open(map, marker);
+      });
     // add marker to marker array
     _markers.push(marker);
     
     marker.desc = windowInfo;
+    oms.addMarker(marker);
   }
 
 // this code is straight from google API documentation, for handling errors that occur during attempted browser geolocation
@@ -282,7 +314,7 @@ function geocode(address,info,markerArray,type){
     method: 'GET'
   }).done(function(response){
     // using callback to assign marker object to markerCallback
-    addMarker(response.results[0].geometry.location,info,markerArray,type);
+    addMarker( response.results[0].geometry.location, info, markerArray, type );
   }); // end ajax done function
 }
 
@@ -348,7 +380,7 @@ var events = [];
 
             within: '10',
 
-            date: when+'-'+when,
+            date: 'Next Week', //when+'-'+when,
 
             page_size: 15,
 
@@ -374,20 +406,33 @@ var events = [];
           if( eventsArr[i].description === null){
             info = 'This is no information for this event.';
           }
+          else if (eventsArr[i].description.length > 250){
+
+            info = '<span class="teaser">' + eventsArr[i].description.substring(0, 250) + '</span>' +
+                   '<span class="complete">' + eventsArr[i].description + '</span>' +
+                   '<span class="more"> More>>></span>';
+            console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
+            console.log(eventsArr[i].description.substring(0, 250).length)
+           }
           else{
             info = eventsArr[i].description;
           }
+
           if ( eventsArr[i].stop_time === null){
             eventsArr[i].stop_time = 'Not provided';
           }
+
           if( eventsArr[i].image === null ){
             imageURL = '';
           }
           else{
             imageURL = eventsArr[i].image.medium.url;
           }
-         address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
 
+
+
+         address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+         
           events.push({
                 name: eventsArr[i].title,
                 location: position,
@@ -438,6 +483,9 @@ var events = [];
       } // end input for loop
  });  // end submit click function
 
+//allows for expansion and contraction of info description
+
+
 /********* test code from Patrick ****************
 //declared globally for passing into other functions
   var restData = [];
@@ -476,3 +524,11 @@ var events = [];
 **************************************************/
 
 }); // end doc ready
+
+
+$(document).on('click', '.more', function(){
+    if( $(this).text() == ' More>>>' ) {
+      $(this).text(' <<<Less').siblings(".complete").show();  
+    }
+    else{ $(this).text(" More>>>").siblings(".complete").hide(); }  
+});
