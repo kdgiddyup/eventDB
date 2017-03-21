@@ -176,6 +176,7 @@ function showRestaurants(resultData) {
     
     // is this event or restaurant? determines marker color later
     var type = 'restaurant';
+    
     // resultData should be an array of restaurant objects
     for (var i=0;i<resultData.length;i++) {
       var thisRestaurant = resultData[i];
@@ -199,11 +200,12 @@ function showRestaurants(resultData) {
 
     // display restaurants in HTML
     var restBlock = $("<div>").addClass('outputBlock');
-    $(restBlock).append("<h3>"+thisRestaurant.name+"</h3><p>"+thisRestaurant.address+"</p><p>Average cost: "+thisRestaurant.cost+"</p>"+thisRestaurant.menu);
+    $(restBlock).append("<h3>"+thisRestaurant.name+"</h3><p>"+thisRestaurant.address+"</p><p>Average cost: $"+thisRestaurant.cost+"</p>"+thisRestaurant.menu);
       
     $("#restOutput").append(restBlock);
 
     } // end results loop
+} // end showRestaurants function
 
 function clearMarkers(markerArray){
 
