@@ -14,8 +14,6 @@ body {
     background-color: grey;
 }
 
-
-
 #mapControls {
 	position: absolute;
 	top: 40px;
@@ -38,7 +36,6 @@ body {
 
 .leadin {
 	font-weight: bold;
-
 }
 .infoWindow .description {
 	max-height: 250px;

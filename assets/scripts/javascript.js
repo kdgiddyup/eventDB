@@ -1,6 +1,7 @@
 // init map callback for google maps api
+//removed ;
 function initMap() {
-    // create map object using google maps api method
+    // create map object using google maps api method2
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 11,
         mapTypeControlOptions: {
@@ -61,7 +62,6 @@ function initMap() {
                 lat: position.coords.latitude + latOffset,
                 lng: position.coords.longitude - lngOffset
             };
-
             // send user position to addMarker function
             // don't actually need a user location marker; the map will be centered near them. 
             //addMarker(userPos,infoWindow);
@@ -77,8 +77,17 @@ function initMap() {
     }
 
 }
+/***** start of Patrick code *********
 
+//starts adaptive coding
+var pinColor = "da3838";
+var context = {one:["Start time","Stop time", "More info", "Find out about tickets and prices here"],
+                    two:["Average cost for two", "Overall user rating", "Types of food", "See photos and their menu here"]};
 // function to add multiple markers from search response
+
+******** end Patrick code block *******/
+/**************************************/
+
 // resultData will be array of objects in format:
 // [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
 
@@ -94,14 +103,25 @@ function showEvents(resultData) {
     
     // restaurant or event? determines marker color later
     var type = 'event';
+
+/******** start of Patrick code *********/
+/*
+function showEvents(resultData,controller) { 
+    //controller is used to switch text in context object and pin color        
+    pinColor = "da3838";
+    var txt = context.one;
+    if (controller === 1){
+    pinColor = "1a7d1a";
+    txt = context.two;
+    }
+********** end of Patrick code block *******
+*******************************************/
     // resultData should be an array of event objects
     for (var i=0;i<resultData.length;i++) {
       var thisEvent = resultData[i];
-      
-      // does image exist? put some html around it
-      if (thisEvent.image != '')
+            // does image exist? put some html around it
+      if (thisEvent.image !== '')
           thisEvent.image = '<p><img class="infoWindowImg" src="'+thisEvent.image+'"/></p>';
-
       // create infoWindow
       var markerInfo = '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
             thisEvent.image+
@@ -112,6 +132,18 @@ function showEvents(resultData) {
             '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">More info and tickets</a></p>'+
             '</div>'; // end markerInfo
 
+/********* alternative markerInfo option from Patrick *****
+      var markerInfo = new google.maps.InfoWindow({
+        //the txt variable allows us to reuse this function but with different text
+        content: '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
+            thisEvent.image+
+            '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
+            '<p><span class="leadin">'+txt[0]+':</span> '+thisEvent.startTime+'</span></p>'+
+            '<p><span class="leadin">'+txt[1]+':</span> '+thisEvent.stopTime+'</span></p>'+
+            '<p><span class="leadin">'+txt[2]+':</span></p><p class="description">'+thisEvent.description+'</p>'+
+            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">'+txt[3]+'</a></p>'+'</div>'
+          }); // end markerInfo object
+************************************************************/
 
 // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
     geocode(thisEvent.address,markerInfo,eventMarkers, type);
@@ -125,11 +157,10 @@ function showEvents(resultData) {
     } // end results loop
 
     // add a marker clusterer library t manage markers that are close together
-    /*
+    /*  we might not use this; let's comment it out for now
     var markerCluster = new MarkerClusterer(map, eventMarkers,
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     */
-
 
 } // end show events function
 
@@ -174,13 +205,6 @@ function showRestaurants(resultData) {
 
     } // end results loop
 
-    // add a marker clusterer library to manage markers that are close together
-    var markerCluster = new MarkerClusterer(map, restaurantMarkers,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-} // end show events function
-
-// pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
-
 function clearMarkers(markerArray){
 
   for (i=0;i<markerArray.length;i++){
@@ -211,12 +235,24 @@ function addMarker(pos,windowInfo,_markers,type){
           fillColor: markerColor,
           strokeColor: strokeColor,                       
           strokeWeight: 1,
-          fillOpacity: 1 
-      }//,            
+          fillOpacity: 1
+          } 
+        });            
+/******** alternative addMarker from Patrick *************
+function addMarker(pos,windowInfo){
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+    var marker = new google.maps.Marker({
+        position: pos,
+        map: map,
+        icon: pinImage
     });
-
+************************************************************/
+    // clicking on marker opens info window
       marker.addListener('click', function() {
-         // update infwindow content
+         // update infowindow content
         infowindow.setContent(marker.desc);
         infowindow.open(map, marker);
         });
@@ -268,7 +304,6 @@ var db = firebase.database();
 
 
 var events = [];
-
     $("#submitButton").on("click", function(event) {
         event.preventDefault();
 
@@ -291,15 +326,15 @@ var events = [];
             if ($(inputs[i]).val()=="")
               $(inputs[i]).addClass("blank")
           }
-          else {
+        else {
 
-        // event ajax stuff here
-        // get events close to user position
-        var where = userPos.lat+','+userPos.lng;
-        var when = $("#inputDate").val().replace(/-/g,'')+'00';
-        
-        console.log(when);
-        var oArgs = {
+          // event ajax stuff here from T. Dusterdieck
+          // adapted by K Davis to get events close to geolocated position and date from input 
+          var where = userPos.lat+','+userPos.lng;
+          var when = $("#inputDate").val().replace(/-/g,'')+'00';
+          
+          console.log(when);
+          var oArgs = {
 
             app_key: 'GRMfQ3CqpWsGdfXM',
 
@@ -332,26 +367,24 @@ var events = [];
           position = {
            lat: parseFloat(eventsArr[i].latitude),
             lng: parseFloat(eventsArr[i].longitude)
-              }
+              };
 
-          if( eventsArr[i].description == null){
-            info = 'This is no information for this event.'
+          if( eventsArr[i].description === null){
+            info = 'This is no information for this event.';
           }
           else{
-            info = eventsArr[i].description
+            info = eventsArr[i].description;
           }
-          if ( eventsArr[i].stop_time == null){
-            eventsArr[i].stop_time = 'Not provided'
-          };
-          if( eventsArr[i].image == null ){
+          if ( eventsArr[i].stop_time === null){
+            eventsArr[i].stop_time = 'Not provided';
+          }
+          if( eventsArr[i].image === null ){
             imageURL = '';
           }
           else{
             imageURL = eventsArr[i].image.medium.url;
           }
          address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
-                // console.log( position )
-                 console.log( address )
 
           events.push({
                 name: eventsArr[i].title,
@@ -370,7 +403,8 @@ var events = [];
     showEvents(events);
       }); // end api call
 
-// restaurant ajax call
+// restaurant ajax call from P. Hussey
+// adapted by K. Davis to get restaurants close to user geolocation
     var restData = [];
     var queryURL = "https://developers.zomato.com/api/v2.1/search?q=&count=15&lat="+userPos.lat+"&lon="+userPos.lng+"&sort=cost&order=asc";
     var key = "1d78eb50e1194c317037b03a6ab3118e";
@@ -402,5 +436,41 @@ var events = [];
       } // end input for loop
  });  // end submit click function
 
+/********* test code from Patrick ****************
+//declared globally for passing into other functions
+  var restData = [];
+
+    $("#restTester").on("click",
+        function restSearch() {
+            var queryURL = "https://developers.zomato.com/api/v2.1/search?q=mexican&count=15&lat=32.039347819445&lon=-81.108557106944&sort=cost&order=asc";
+            var key = "1d78eb50e1194c317037b03a6ab3118e";
+            $.ajax({
+                    url: queryURL,
+                    method: "GET",
+                    beforeSend: function(request) {
+                        request.setRequestHeader("user-key", key);
+                    },
+                })
+                .done(function(response) {
+                    restData = [];
+                    results = response.restaurants;
+                    console.log(results);
+                    for (var i = 0; i < results.length; i++) {
+                        var a = {
+                            "name": results[i].restaurant.name,
+                            "address": results[i].restaurant.location.address, 
+                            "startTime": results[i].restaurant.average_cost_for_two,
+                            "stopTime": results[i].restaurant.user_rating.aggregate_rating,
+                            "description":results[i].restaurant.cuisines,
+                            "image":results[i].restaurant.thumb,
+                            "url":results[i].restaurant.url,
+                    }; //!a could grow depending on additional info that we need
+                        restData.push(a);
+                    } //ends for loop
+                    console.log(restData);
+                showEvents(restData, 1);
+                }); //ends done function
+        }); //ends restSearch function
+**************************************************/
 
 }); // end doc ready
