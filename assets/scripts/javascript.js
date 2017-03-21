@@ -378,9 +378,9 @@ var events = [];
 
             where: where,
 
-            within: '10',
+            within: '5',
 
-            date: 'Next Week', //when+'-'+when,
+            date: when+'-'+when,
 
             page_size: 15,
 
@@ -411,8 +411,8 @@ var events = [];
             info = '<span class="teaser">' + eventsArr[i].description.substring(0, 250) + '</span>' +
                    '<span class="complete">' + eventsArr[i].description + '</span>' +
                    '<span class="more"> More>>></span>';
-            console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
-            console.log(eventsArr[i].description.substring(0, 250).length)
+            // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
+            // console.log(eventsArr[i].description.substring(0, 250).length)
            }
           else{
             info = eventsArr[i].description;
