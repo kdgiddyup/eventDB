@@ -225,7 +225,7 @@ function showRestaurants(resultData) {
 
     // display restaurants in HTML
     var restBlock = $("<div>").addClass('outputBlock');
-    $(restBlock).append("<h3>"+thisRestaurant.name+"</h3><p>"+thisRestaurant.address+"</p><p>Average cost: $"+thisRestaurant.cost+"</p>"+thisRestaurant.menu);
+    $(restBlock).append("<h3>"+thisRestaurant.name+"</h3><p>"+thisRestaurant.location+"</p><p>Average cost: $"+thisRestaurant.cost+"</p>"+thisRestaurant.menu);
       
     $("#restOutput").append(restBlock);
 
@@ -284,7 +284,7 @@ function addMarker(pos,windowInfo){
       //   infowindow.open(map, marker);
       //   });
 
-      //spiderfier event listerners
+      //spiderfier event listeners
       oms.addListener('click', function(marker) {
         iw.setContent(marker.desc);
         iw.open(map, marker);
@@ -368,6 +368,7 @@ var events = [];
           var when = $("#inputDate").val().replace(/-/g,'')+'00';
           
           console.log(when);
+
           var oArgs = {
 
             app_key: 'GRMfQ3CqpWsGdfXM',
@@ -375,6 +376,7 @@ var events = [];
             q: "",
 
             // to do: need an ajax call to get zip from geolocated lat/lng
+            // not sure why this would be needed. lat/lng is already being used for 'where'
 
             where: where,
 
@@ -386,69 +388,64 @@ var events = [];
 
             sort_order: "popularity",
 
+            change_multi_day_start: true,
+
         };
         events = [];
 
 
         EVDB.API.call("/events/search", oArgs, function(oData) {
-            let position = {};
+
             let name, info;
             let address = '';
             let eventsArr = oData.events.event;
 
-    for (var i in eventsArr) {
+            for (var i in eventsArr) {
 
-          position = {
-           lat: parseFloat(eventsArr[i].latitude),
-            lng: parseFloat(eventsArr[i].longitude)
-              };
+                  if( eventsArr[i].description === null){
+                    info = 'This is no information for this event.';
+                  }
+                  else if (eventsArr[i].description.length > 250){
 
-          if( eventsArr[i].description === null){
-            info = 'This is no information for this event.';
-          }
-          else if (eventsArr[i].description.length > 250){
+                    info = '<span class="teaser">' + eventsArr[i].description.substring(0, 250) + '</span>' +
+                           '<span class="complete">' + eventsArr[i].description + '</span>' +
+                           '<span class="more"> More>>></span>';
+                    // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
+                    // console.log(eventsArr[i].description.substring(0, 250).length)
+                   }
+                  else{
+                    info = eventsArr[i].description;
+                  }
 
-            info = '<span class="teaser">' + eventsArr[i].description.substring(0, 250) + '</span>' +
-                   '<span class="complete">' + eventsArr[i].description + '</span>' +
-                   '<span class="more"> More>>></span>';
-            // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
-            // console.log(eventsArr[i].description.substring(0, 250).length)
-           }
-          else{
-            info = eventsArr[i].description;
-          }
+                  if ( eventsArr[i].stop_time === null){
+                    eventsArr[i].stop_time = 'Not provided';
+                  }
 
-          if ( eventsArr[i].stop_time === null){
-            eventsArr[i].stop_time = 'Not provided';
-          }
+                  if( eventsArr[i].image === null ){
+                    imageURL = '';
+                  }
+                  else{
+                    imageURL = eventsArr[i].image.medium.url;
+                  }
 
-          if( eventsArr[i].image === null ){
-            imageURL = '';
-          }
-          else{
-            imageURL = eventsArr[i].image.medium.url;
-          }
-
-
-
-         address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
-         
-          events.push({
-                name: eventsArr[i].title,
-                location: position,
-                address: address,
-                description: info,
-                url: eventsArr[i].url,
-                image: imageURL,
-                venue: eventsArr[i].venue_name,
-                startTime: eventsArr[i].start_time,
-                stopTime: eventsArr[i].stop_time
-            });
+                 address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+                 
+                  events.push({
+                        name: eventsArr[i].title,
+                        address: address,
+                        description: info,
+                        url: eventsArr[i].url,
+                        image: imageURL,
+                        venue: eventsArr[i].venue_name,
+                        startTime: eventsArr[i].start_time,
+                        stopTime: eventsArr[i].stop_time
+                    });
 
 
-    } // end for loop
-    showEvents(events);
-      }); // end api call
+            } // end for loop
+
+          showEvents(events);
+        }); // end api call
 
 // restaurant ajax call from P. Hussey
 // adapted by K. Davis to get restaurants close to user geolocation
