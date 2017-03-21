@@ -15,18 +15,40 @@ body {
 }
 
 
-/* test stuff */
 
-#eventTester {
+#mapControls {
 	position: absolute;
 	top: 40px;
 	left: 50px;
+    background-color: #fff;
+    opacity: .75;
+    padding: 20px;
+    height: 72%;
+    width: 25%;
+    min-width: 300px;
+    /*overflow: auto; */
+}
+#eventOutput {
+    margin: 0 0 20px 0;
+}
+#eventOutput, #restOutput {
+    height: 38%;
+    overflow: auto;
 }
 
-#restTester {
-    position: absolute;
-    top: 80px;
-    left: 50px;
-}
 .leadin {
 	font-weight: bold;
+
+}
+.infoWindow .description {
+	max-height: 250px;
+	overflow: auto;
+	overflow-wrap: break-word;
+}
+
+.infoWindow img {
+	width: 100%;
+}
+input.blank {
+    background-color: red;
+}

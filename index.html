@@ -12,6 +12,8 @@
 	    <!-- Latest compiled and minified CSS -->
 		<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<!-- marker clusterer library -->
+		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 	    
 	    <link href="assets/css/styles.css" type="text/css" rel="stylesheet">
    		<script type="text/javascript" src="http://api.eventful.com/js/api"></script>
@@ -20,17 +22,23 @@
 	 </head>
 	 <body>
 		<div id="map"></div>
-		
-		<button id='eventTester'>Get events</button>
-
-		<button id='restTester'>Get restaurants</button>
-		<div id="eventOutput"></div>
-		
-		<div id="restOutput"></div>
-
+		<div id="mapControls">
+			<form>
+				<p>When's the big night?</p>
+				<div><input data-required="required" type="date" id="inputDate"/></div>
+				<div><input data-required="" id="submitButton" type="submit" value="Your night awaits"></div>
+			</form>
+			
+			<div id="eventOutput"></div>
+			
+			<div id="restOutput"></div>
+		</div>
 
 		
 		<!-- keep this script at the bottom, above <body> tag -->
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ&callback=initMap"></script>
+		<!-- script type="text/javascript" src="assets/scripts/spiderfy.js"></script -->
+		<!-- script type="text/javascript">omsInit();</script-->
+
 	</body>
 </html>
