@@ -1,5 +1,5 @@
 // init map callback for google maps api
-//removed ;
+//removed;
 function initMap() {
     // create map object using google maps api method2
     map = new google.maps.Map(document.getElementById('map'), {
@@ -45,18 +45,13 @@ function initMap() {
     }
 }
 //starts adaptive coding
-var pinColor = "da3838";
-var context = {one:["Start time","Stop time", "More info", "Find out about tickets and prices here"],
-                    two:["Average cost for two", "Overall user rating", "Types of food", "See photos and their menu here"]};
+var context = {
+        one:{ text: ["Start time","Stop time", "More info", "Find out about tickets and prices here"], color: "da3838"},
+        two:{ text: ["Average cost for two", "Overall user rating", "Types of food", "See photos and their menu here"], color: "1a7d1a" }
+              };
 // function to add multiple markers from search response
-function showEvents(resultData,controller) { 
-    //controller is used to switch text in context object and pin color        
-    pinColor = "da3838";
-    var txt = context.one;
-    if (controller === 1){
-    pinColor = "1a7d1a";
-    txt = context.two;
-    }
+function showEvents(resultData,contents) { 
+    //contents is context object .whichever was passed by function call
     // resultData should be an array of event objects
     for (var i=0;i<resultData.length;i++) {
       var thisEvent = resultData[i];
@@ -69,21 +64,21 @@ function showEvents(resultData,controller) {
         content: '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
             thisEvent.image+
             '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
-            '<p><span class="leadin">'+txt[0]+':</span> '+thisEvent.startTime+'</span></p>'+
-            '<p><span class="leadin">'+txt[1]+':</span> '+thisEvent.stopTime+'</span></p>'+
-            '<p><span class="leadin">'+txt[2]+':</span></p><p class="description">'+thisEvent.description+'</p>'+
-            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">'+txt[3]+'</a></p>'+'</div>'
+            '<p><span class="leadin">'+contents.text[0]+':</span> '+thisEvent.startTime+'</span></p>'+
+            '<p><span class="leadin">'+contents.text[1]+':</span> '+thisEvent.stopTime+'</span></p>'+
+            '<p><span class="leadin">'+contents.text[2]+':</span></p><p class="description">'+thisEvent.description+'</p>'+
+            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">'+contents.text[3]+'</a></p>'+'</div>'
           }); // end markerInfo object
 
 
 
 // get position and add marker by geocoding the address string
-      geocode(thisEvent.address,markerInfo);//line 111
+      geocode(thisEvent.address, markerInfo, contents.color);//line 111
     } // end results loop
 } // end show events function
 
 // pass a lat/lng object ('pos' argument) and infoWindow content ('markerInfo') to this function to place a clickable marker on the map
-function addMarker(pos,windowInfo){
+function addMarker(pos,windowInfo, pinColor){
         var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
         new google.maps.Size(21, 34),
         new google.maps.Point(0,0),
@@ -109,14 +104,14 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 
 
 // gets stringy address, returns {lat,lng} object in latLngCallback function
-function geocode(address,info){
+function geocode(address, info, color){
   // API call to google geocoding service - takes address (encoded) and api key
   var urlQuery = 'https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURI(address)+'&key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ';
   $.ajax({
     url: urlQuery,
     method: 'GET'
   }).done(function(response){
-    addMarker(response.results[0].geometry.location,info);//line 85
+    addMarker(response.results[0].geometry.location,info, color);//line 85
   });
 }
 
@@ -203,7 +198,7 @@ var events = [];
 
 
     } // end for loop
-    showEvents(events);
+    showEvents(events, context.one);
       }); // end api call
 
  });  // end test click function
@@ -235,11 +230,11 @@ var events = [];
                             "description":results[i].restaurant.cuisines,
                             "image":results[i].restaurant.thumb,
                             "url":results[i].restaurant.url,
-                    }; //!a could grow depending on additional info that we need
+                    };
                         restData.push(a);
                     } //ends for loop
                     console.log(restData);
-                showEvents(restData, 1);
+                showEvents(restData, context.two);
                 }); //ends done function
         }); //ends restSearch function
 
