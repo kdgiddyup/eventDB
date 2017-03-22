@@ -312,6 +312,7 @@ var events = [];
           // add inputs to the inputs array
           inputs.push($(this))
         });
+    var keyWord = $("#restSearch").val();
 var eventKeyWord = $("#eventSearch").val();
         // loop through array and check for required data attribute and blank values
         for (var i=0;i<inputs.length;i++){
@@ -411,7 +412,6 @@ var eventKeyWord = $("#eventSearch").val();
 // restaurant ajax call from P. Hussey
 // adapted by K. Davis to get restaurants close to user geolocation
     var restData = [];
-    var keyWord = $("#restSearch").val();
     console.log(keyWord);
     var queryURL = "https://developers.zomato.com/api/v2.1/search?q="+keyWord+"&count=15&lat="+userPos.lat+"&lon="+userPos.lng+"&radius="+radius+"sort=cost&order=asc";
     var key = "1d78eb50e1194c317037b03a6ab3118e";
