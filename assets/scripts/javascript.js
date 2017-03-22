@@ -1,23 +1,4 @@
-// init map callback for google maps api
-//removed ;
-
 window.onload = function() {
-  
-  
-  // oms.addListener('click', function(marker) {
-  //   iw.setContent(marker.desc);
-  //   iw.open(map, marker);
-  // });
-
-  // var bounds = new gm.LatLngBounds();
-
-
-
-
-
-
-  // function initMap() {
-      // create map object using google maps api method2
       gm = google.maps;
       map = new google.maps.Map(document.getElementById('map'), {
           zoom: 11,
@@ -64,41 +45,67 @@ window.onload = function() {
 
      // we want to attempt to center the map at the user's present location
       // Try HTML5 geolocation.
+      // First, set default position (City Market, Savannah)
+      userPos = { 
+        lat: 32.080816,
+        lng:-81.094950 
+      };
+      // userPos isn't exactly where we want map centered, since we need space for an interface; on wider screens, offset longitude to push map to right
+      if (window.innerWidth > 1000) {
+          var lngOffset = .2;
+          var latOffset = -.1;
+      } else {
+          var lngOffset = .1;
+          var latOffset = -.1;
+      }
+      mapCenter = {
+          lat: userPos.lat + latOffset,
+          lng: userPos.lng - lngOffset
+        }
+     // now, if we geolocate, we can override the default position
       if (navigator.geolocation) {
 
           navigator.geolocation.getCurrentPosition(function(position) {
               // create geolocation object of user's position
-              userPos = {
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude
-              };
-              // on wider screens, offset longitude to push map to right
-              if (window.innerWidth > 1000) {
-                  var lngOffset = .2;
-                  var latOffset = -.1;
-              } else {
-                  var lngOffset = .1;
-                  var latOffset = -.1;
-              }
-              var mapCenter = {
-                  lat: position.coords.latitude + latOffset,
-                  lng: position.coords.longitude - lngOffset
-              };
-              // send user position to addMarker function
-              // don't actually need a user location marker; the map will be centered near them. 
-              //addMarker(userPos,infoWindow);
-
+              userPos.lat = position.coords.latitude;
+              userPos.lng = position.coords.longitude;
+              
+              // calculate new map center
+              mapCenter = {
+                lat: userPos.lat + latOffset,
+                lng: userPos.lng + lngOffset
+              } 
               // update map object with new center location
               map.setCenter(mapCenter);
-          }, function() {
-              handleLocationError(true, infoWindow, map.getCenter());
-          });
-      } else {
+          }, handleLocationError         
+        )
+      }
+      else {
           // Browser doesn't support Geolocation
-          handleLocationError(false, infoWindow, map.getCenter());
+          map.setCenter(mapCenter);
+          console.log('Browser doesn\'t support Geolocation')
       }
 
   }//end window.onload
+
+// handle errors that occur during attempted browser geolocation
+function handleLocationError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            console.log("User denied geolocation.");
+            map.setCenter(mapCenter);
+            break;
+        case error.POSITION_UNAVAILABLE:
+            console.log("Location information is unavailable.")
+            break;
+        case error.TIMEOUT:
+            console.log("The request to get user location timed out.")
+            break;
+        case error.UNKNOWN_ERROR:
+            console.log("An unknown error occurred.")
+            break;
+    }
+}
 
 // resultData will be array of objects in format:
 // [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
@@ -250,15 +257,6 @@ function addMarker(pos,windowInfo,_markers,type){
     marker.desc = windowInfo;
     oms.addMarker(marker);
   }
-
-// this code is straight from google API documentation, for handling errors that occur during attempted browser geolocation
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ?
-      'Error: The Geolocation service failed.' :
-      'Error: Your browser doesn\'t support geolocation.');
-  }
-
 
 // gets stringy address, returns {lat,lng} object in latLngCallback function
 function geocode(address,info,markerArray,type){
