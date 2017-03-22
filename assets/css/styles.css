@@ -18,8 +18,8 @@ body {
 	position: absolute;
 	top: 40px;
 	left: 50px;
-    background-color: #fff;
-    opacity: .75;
+    background: linear-gradient( to right, #fff , 90%, rgba(255, 255, 255, 0.1));
+    opacity: .80;
     padding: 20px;
     height: 72%;
     width: 25%;
@@ -42,7 +42,6 @@ body {
 	overflow: auto;
 	overflow-wrap: break-word;
 }
-
 .infoWindow img {
 	width: 100%;
 }

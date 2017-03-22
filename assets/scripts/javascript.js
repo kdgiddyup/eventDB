@@ -151,7 +151,6 @@ function showEvents(resultData) {
     $(eventBlock).append("<h3>"+thisEvent.name+"</h3><p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
       
     $("#eventOutput").append(eventBlock);
-
     } // end results loop
 
     // add a marker clusterer library t manage markers that are close together
@@ -159,6 +158,7 @@ function showEvents(resultData) {
     var markerCluster = new MarkerClusterer(map, eventMarkers,
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     */
+
 
 } // end show events function
 
@@ -170,7 +170,6 @@ function showRestaurants(resultData) {
     $("#restOutput").empty().append("<h2>Dining</h2>");
 
     // reset restaurant markers array
-    restaurantMarkers = [];
     
     // is this event or restaurant? determines marker color later
     var type = 'restaurant';
@@ -178,7 +177,6 @@ function showRestaurants(resultData) {
     // resultData should be an array of restaurant objects
     for (var i=0;i<resultData.length;i++) {
       var thisRestaurant = resultData[i];
-
       // does menu exist? put some html around it, too
       if (thisRestaurant.menu != '')
           thisRestaurant.menu = '<p><span class="info_link"><a href="'+thisRestaurant.menu+'" target="_blank">Menu</a></p>';
@@ -224,7 +222,7 @@ function addMarker(pos,windowInfo,_markers,type){
       strokeColor = '#FF896D'
     }
     // instanstiate a marker object
-    var marker = new google.maps.Marker({
+var marker = new google.maps.Marker({
         position: pos,
         map: map,
         desc: windowInfo,
@@ -253,13 +251,14 @@ function addMarker(pos,windowInfo,_markers,type){
 
 // gets stringy address, returns {lat,lng} object in latLngCallback function
 function geocode(address,info,markerArray,type){
+
   // API call to google geocoding service - takes address (encoded) and api key
   var urlQuery = 'https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURI(address)+'&key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ';
   $.ajax({
     url: urlQuery,
     method: 'GET'
   }).done(function(response){
-    // using callback to assign marker object to markerCallback
+// using callback to assign marker object to markerCallback
     addMarker( response.results[0].geometry.location, info, markerArray, type );
   }); // end ajax done function
 }
@@ -303,6 +302,8 @@ var events = [];
           // add inputs to the inputs array
           inputs.push($(this))
         });
+
+    var keyWord = $("#restSearch").val();
 var eventKeyWord = $("#eventSearch").val();
         // loop through array and check for required data attribute and blank values
         for (var i=0;i<inputs.length;i++){
@@ -350,6 +351,7 @@ var eventKeyWord = $("#eventSearch").val();
             let address = '';
             let eventsArr = oData.events.event;
 
+
             for (var i in eventsArr) {
 
                   if( eventsArr[i].description === null){
@@ -357,10 +359,10 @@ var eventKeyWord = $("#eventSearch").val();
                   }
                   else if (eventsArr[i].description.length > 250){
                     console.log(eventsArr[i].title+ ' Desc:' +  eventsArr[i].description) ;
-                    console.log('---------------------------------------');
-                    info = '<span class="teaser">' + eventsArr[i].description.substring(0, 250) + '</span>' +
+                    
+                    info = '<div class = "containment">' +
                            '<span class="complete">' + eventsArr[i].description + '</span>' +
-                           '<span class="more"> More>>></span>';
+                           '<span class="more"> More>>></span>' + '</div>';
                     
                     // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
                     // console.log(eventsArr[i].description.substring(0, 250).length)
@@ -402,7 +404,6 @@ var eventKeyWord = $("#eventSearch").val();
 // restaurant ajax call from P. Hussey
 // adapted by K. Davis to get restaurants close to user geolocation
     var restData = [];
-    var keyWord = $("#restSearch").val();
     console.log(keyWord);
     var queryURL = "https://developers.zomato.com/api/v2.1/search?q="+keyWord+"&count=15&lat="+userPos.lat+"&lon="+userPos.lng+"&radius="+radius+"sort=cost&order=asc";
     var key = "1d78eb50e1194c317037b03a6ab3118e";
