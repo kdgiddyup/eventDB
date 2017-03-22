@@ -12,7 +12,6 @@ body, html {
     height: 758px;
     overflow: hidden;
     background-color: grey;
-    /*position: relative;*/
 }
 
 #mapControls {
