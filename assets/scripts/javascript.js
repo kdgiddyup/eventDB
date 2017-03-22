@@ -239,13 +239,6 @@ function addMarker(pos,windowInfo,_markers,type){
           } 
         });            
 
-    // clicking on marker opens info window
-      // marker.addListener('click', function() {
-      //    // update infowindow content
-      //   infowindow.setContent(marker.desc);
-      //   infowindow.open(map, marker);
-      //   });
-
       //spiderfier event listeners
       oms.addListener('click', function(marker) {
         iw.setContent(marker.desc);
