@@ -52,7 +52,7 @@ window.onload = function() {
       };
       // userPos isn't exactly where we want map centered, since we need space for an interface; on wider screens, offset longitude to push map to right
       if (window.innerWidth > 1000) {
-          var lngOffset = .2;
+          var lngOffset = 0;
           var latOffset = -.1;
       } else {
           var lngOffset = .1;
