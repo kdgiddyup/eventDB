@@ -473,6 +473,7 @@ var events = [];
 }); // end doc ready
 
 
+
 $(document).on('click', '.toggle-div', function(){
       if( $(this).children().text() == ' More>>>' ){
           $(this).children().text(' <<<Less');
