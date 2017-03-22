@@ -14,10 +14,10 @@ var db = firebase.database();
 
 window.onload = function() {
       gm = google.maps;
-      map = new google.maps.Map(document.getElementById('map'), {
+      map = new gm.Map(document.getElementById('map'), {
           zoom: 11,
           mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DEFAULT,
+            style: gm.MapTypeControlStyle.DEFAULT,
             mapTypeIds: ['roadmap', 'terrain','hybrid','satellite']
             },
           fullscreenControl: true,
@@ -51,7 +51,7 @@ window.onload = function() {
                   {markersWontMove: true, markersWontHide: true, keepSpiderfied: true});
 
         // add click event to marker to open info window
-      infowindow = new google.maps.InfoWindow({
+      infowindow = new gm.InfoWindow({
           maxWidth: 300
         });
       iw = infowindow;
@@ -121,9 +121,6 @@ function handleLocationError(error) {
     }
 }
 
-// resultData will be array of objects in format:
-// [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
-
 function showEvents(resultData) { 
     // if there are event markers, clear them
     clearMarkers(eventMarkers);
@@ -173,19 +170,12 @@ function showEvents(resultData) {
    
    // display events in HTML
     var eventBlock = $("<div>").addClass('outputBlock');
-    $(eventBlock).append("<h3>"+thisEvent.name+"</h3>"+"<p>"+thisEvent.venue+"</p>"+"<p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
-      
+    $(eventBlock).append("<h3>"+thisEvent.name+"</h3><p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
     $("#eventOutput").append(eventBlock);
     } // end results loop
 
-    // add a marker clusterer library t manage markers that are close together
-    /*  we might not use this; let's comment it out for now
-    var markerCluster = new MarkerClusterer(map, eventMarkers,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-    */
 
-
-} // end showEvents function
+} // end show events function
 
 function showRestaurants(resultData) { 
     // if there are restaurant markers, clear them
@@ -247,7 +237,8 @@ function addMarker(pos,windowInfo,_markers,type){
       strokeColor = '#FF896D'
     }
     // instanstiate a marker object
-    var marker = new google.maps.Marker({
+
+var marker = new gm.Marker({
         position: pos,
         map: map,
         desc: windowInfo,
@@ -291,6 +282,7 @@ function geocode( address,info,markerArray,type ){
     addMarker( response.results[0].geometry.location, info, markerArray, type );
   }); // end ajax done function
 }
+
 
 //makes the API call for event data, then calls the function to place them on the map
 function getEventData(eventKeyWord, where, radius, when) {
@@ -358,6 +350,7 @@ function getEventData(eventKeyWord, where, radius, when) {
                 imageURL = eventsArr[i].image.medium.url;
               }
 
+
              address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
               console.log(eventsArr[i].title + ' address: ' + address);
               events.push({
@@ -370,6 +363,7 @@ function getEventData(eventKeyWord, where, radius, when) {
                     startTime: moment(new Date(eventsArr[i].start_time)).format('dddd, MMMM Do, h:mm a'),
                     stopTime: stopTime
                 });
+
 
 
         } // end for loop
