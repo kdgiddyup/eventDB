@@ -1,9 +1,9 @@
 window.onload = function() {
       gm = google.maps;
-      map = new google.maps.Map(document.getElementById('map'), {
+      map = new gm.Map(document.getElementById('map'), {
           zoom: 11,
           mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DEFAULT,
+            style: gm.MapTypeControlStyle.DEFAULT,
             mapTypeIds: ['roadmap', 'terrain','hybrid','satellite']
             },
           fullscreenControl: true,
@@ -37,7 +37,7 @@ window.onload = function() {
                   {markersWontMove: true, markersWontHide: true});
 
         // add click event to marker to open info window
-      infowindow = new google.maps.InfoWindow({
+      infowindow = new gm.InfoWindow({
           maxWidth: 300
         });
       iw = infowindow;
@@ -107,9 +107,6 @@ function handleLocationError(error) {
     }
 }
 
-// resultData will be array of objects in format:
-// [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
-
 function showEvents(resultData) { 
     // if there are event markers, clear them
     clearMarkers(eventMarkers);
@@ -149,16 +146,8 @@ function showEvents(resultData) {
    // display events in HTML
     var eventBlock = $("<div>").addClass('outputBlock');
     $(eventBlock).append("<h3>"+thisEvent.name+"</h3><p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
-      
     $("#eventOutput").append(eventBlock);
     } // end results loop
-
-    // add a marker clusterer library t manage markers that are close together
-    /*  we might not use this; let's comment it out for now
-    var markerCluster = new MarkerClusterer(map, eventMarkers,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-    */
-
 
 } // end show events function
 
@@ -222,7 +211,7 @@ function addMarker(pos,windowInfo,_markers,type){
       strokeColor = '#FF896D'
     }
     // instanstiate a marker object
-var marker = new google.maps.Marker({
+var marker = new gm.Marker({
         position: pos,
         map: map,
         desc: windowInfo,
@@ -236,13 +225,6 @@ var marker = new google.maps.Marker({
           fillOpacity: 1
           } 
         });            
-
-    // clicking on marker opens info window
-      // marker.addListener('click', function() {
-      //    // update infowindow content
-      //   infowindow.setContent(marker.desc);
-      //   infowindow.open(map, marker);
-      //   });
 
       //spiderfier event listeners
       oms.addListener('click', function(marker) {
@@ -390,7 +372,7 @@ var eventKeyWord = $("#eventSearch").val();
                   }
 
                  address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
-                 
+                
                   events.push({
                         name: eventsArr[i].title,
                         address: address,
