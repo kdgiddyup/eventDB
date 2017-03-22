@@ -1,33 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta property="og:image" content="">
-    <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <link href="assets/css/styles.css" type="text/css" rel="stylesheet">
-    <title>A night out in [placeholder], powered by FBM</title>
-</head>
+	<head>
+	  <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+	    <meta name="keywords" content="">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta property="og:image" content=""/>
+	    <!-- Latest compiled and minified CSS -->
+		<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<!-- marker clusterer library -->
+		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+	    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ"></script>
+	    <link href="assets/css/styles.css" type="text/css" rel="stylesheet">
+   		<script type="text/javascript" src="http://api.eventful.com/js/api"></script>
+		<style>
+			.complete{
+			    display: none;
+			}
 
-<body>
-    <div id="map"></div>
+			.more{
+			    background:lightblue;
+			    color:navy;
+			    font-size:13px;
+			    padding:3px;
+			    cursor:pointer;
+			}
+		</style>
+	  <title>A night out in [you are here], powered by FBM</title>
+	 </head>
+	 <body>
+		<div id="map"></div>
+		<div id="mapControls">
+			<form>
+				<p>When's the big night?</p>
+				<div><input data-required="required" type="date" id="inputDate"/></div>
+				<div><input data-required="" id="submitButton" type="submit" value="Your night awaits"></div>
+				<select id="radiusSelect" placeholder="Search radius">
+					<option type="radiusOption" value="1">1</option>
+					<option type="radiusOption" value="5">5</option>
+					<option selected="selected" type="radiusOption" value="10">10</option>
+					<option type="radiusOption" value="20">20</option>
+					<option type="radiusOption" value="30">30</option>
+				</select><br>
+				<input id = "restSearch" type = 'text'  placeholder="Search for food options">
+				<input id = "eventSearch" type = 'text' placeholder="Search for events">
+			</form>
+			
+			<div id="eventOutput"></div>
+			
+			<div id="restOutput"></div>
+		</div>
 
-    <button id='eventTester'>Get events</button>
 
-    <button id='restTester'>Get restaurants</button>
-
-        <div id="eventOutput"></div>
+		<!-- keep this script at the bottom, above <body> tag -->
 		
-		<div id="restOutput"></div>
+		
+		<script defer src="assets/scripts/spiderfy.js" type="text/javascript"></script>
+		<script src="assets/scripts/javascript.js" type="text/javascript"></script>
+		<!-- script type="text/javascript" src="assets/scripts/spiderfy.js"></script -->
+		<!-- script type="text/javascript">omsInit();</script-->
 
-    <script type="text/javascript" src="http://api.eventful.com/js/api"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ&callback=initMap"></script>
-    <script src="assets/scripts/javascript.js" type="text/javascript"></script>
-</body>
+	</body>
 </html>
