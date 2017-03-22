@@ -24,12 +24,17 @@
    		<script type="text/javascript" src="http://api.eventful.com/js/api"></script>
    		<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
    		<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+
+		<style>
+
+		</style>
 	  <title>A night out in [you are here], powered by FBM</title>
 	 </head>
 	 <body>
 		<div id="map"></div>
 		<div id="mapControls">
 			<form>
+				<input id="userName" type="text" placeholder="Enter your name">
 				<p>
 					When's the big night?
 				</p>
@@ -48,9 +53,11 @@
 					<option type="radiusOption" value="30">30</option>
 
 				</select><br>
+
+
 				<input id = "restSearch" type = 'text'  placeholder="Search for food options">
 				<input id = "eventSearch" type = 'text' placeholder="Search for events">
-
+				<div id="users"></div>
 			</form>
 			
 			<div id="eventOutput"></div>
