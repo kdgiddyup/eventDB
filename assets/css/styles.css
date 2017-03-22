@@ -77,3 +77,12 @@ h3{
 h2{
     font-size: 36px;
 }
+
+.user:hover{
+    cursor: pointer;
+    background-color: #ddd;
+}
+
+.user[current-user='yes']{
+    background-color: #aaa;
+}

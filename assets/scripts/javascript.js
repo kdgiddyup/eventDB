@@ -1,3 +1,17 @@
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyCe2CvvyFRm7x0TWIx4N3KFwWO5nvAidGE",
+  authDomain: "eventdb-7bc25.firebaseapp.com",
+  databaseURL: "https://eventdb-7bc25.firebaseio.com",
+  storageBucket: "eventdb-7bc25.appspot.com",
+  messagingSenderId: "391210280123"
+};
+
+firebase.initializeApp(config);
+
+var db = firebase.database();
+
+
 window.onload = function() {
       gm = google.maps;
       map = new google.maps.Map(document.getElementById('map'), {
@@ -154,7 +168,7 @@ function showEvents(resultData) {
       }
 
 
-// get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
+    // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
     geocode (thisEvent.address, markerInfo, eventMarkers, type);
    
    // display events in HTML
@@ -171,7 +185,7 @@ function showEvents(resultData) {
     */
 
 
-} // end show events function
+} // end showEvents function
 
 function showRestaurants(resultData) { 
     // if there are restaurant markers, clear them
@@ -201,7 +215,7 @@ function showRestaurants(resultData) {
 
 
 
-// get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
+    // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
     geocode( thisRestaurant.location, markerInfo, restaurantMarkers, type);
 
 
@@ -233,7 +247,7 @@ function addMarker(pos,windowInfo,_markers,type){
       strokeColor = '#FF896D'
     }
     // instanstiate a marker object
-var marker = new google.maps.Marker({
+    var marker = new google.maps.Marker({
         position: pos,
         map: map,
         desc: windowInfo,
@@ -265,7 +279,7 @@ var marker = new google.maps.Marker({
   }
 
 // gets stringy address, returns {lat,lng} object in latLngCallback function
-function geocode(address,info,markerArray,type){
+function geocode( address,info,markerArray,type ){
 
   // API call to google geocoding service - takes address (encoded) and api key
   var urlQuery = 'https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURI(address)+'&key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ';
@@ -273,171 +287,106 @@ function geocode(address,info,markerArray,type){
     url: urlQuery,
     method: 'GET'
   }).done(function(response){
-// using callback to assign marker object to markerCallback
+    // using callback to assign marker object to markerCallback
     addMarker( response.results[0].geometry.location, info, markerArray, type );
   }); // end ajax done function
 }
 
-// document ready statements here
-$(document).ready(function(){
+//makes the API call for event data, then calls the function to place them on the map
+function getEventData(eventKeyWord, where, radius, when) {
+    var oArgs = {
 
-// it will be necessary to  track markers in order to unset them so here're arrays to help with that
-eventMarkers = [];
-restaurantMarkers = [];
+        app_key: 'GRMfQ3CqpWsGdfXM',
 
-// Initialize Firebase
-var config = {
-    apiKey: "AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ",
-    authDomain: "eventdb-1f7c6.firebaseapp.com",
-    databaseURL: "https://eventdb-1f7c6.firebaseio.com",
-    storageBucket: "eventdb-1f7c6.appspot.com",
-    messagingSenderId: "330315538394"
-};
-firebase.initializeApp(config);
-var db = firebase.database();
+        q: eventKeyWord,
 
-let tempDate = moment( new Date()).format('YYYY-MM-DD');
+        where: where,
 
-// if( tempDate.getMonth() < 9 ){
-//   tempDate = tempDate.getFullYear() + '-0' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate())
-// }
-// else{
-//   tempDate = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate())
-// }
+        within: radius,
 
-$('#inputDate').val(tempDate);
+        date: when+'-'+when,
 
-var events = [];
-    $("#submitButton").on("click", function(event) {
-        event.preventDefault();
+        page_size: 15,
 
-        // get search radius value
-        var radius = String( $("#radiusSelect").val() );
-        console.log('radius: '+radius);
+        sort_order: "popularity",
 
-        // check for required fields
-        var inputs =[];
-        
-        // loop through inputs on the page
-        $("input").each(function(){
-          // remove any previously added 'blank' class; we add the 'blank' class to alert user a field must be filled in; 
-          // if there are no blank classes, jquery will fail silently
-          $(this).removeClass("blank");
-          
-          // add inputs to the inputs array
-          inputs.push($(this))
-        });
+        change_multi_day_start: true,
 
-        
-        var keyWord = $("#restSearch").val();
-        var eventKeyWord = $("#eventSearch").val();
+    };
 
-        // loop through array and check for required data attribute and blank values
-        // for (var i=0;i<inputs.length;i++){
-        //   if ($(inputs[i]).attr("data-required")=="required") {
-        //     if ($(inputs[i]).val()=="")
-        //       $(inputs[i]).addClass("blank")
-        //   }
-        //   else {
-
-          // event ajax stuff here from T. Dusterdieck
-          // adapted by K Davis to get events close to geolocated position and date from input 
-          var where = userPos.lat+','+userPos.lng;
-          var when = $("#inputDate").val().replace(/-/g,'')+'00';
-          
-          console.log(when);
-
-          var oArgs = {
-
-            app_key: 'GRMfQ3CqpWsGdfXM',
-
-            q: eventKeyWord,
-
-            // to do: need an ajax call to get zip from geolocated lat/lng
-            // not sure why this would be needed. lat/lng is already being used for 'where'
-
-            where: where,
-
-            within: radius,
-
-            date: when+'-'+when,
-
-            page_size: 15,
-
-            sort_order: "popularity",
-
-            change_multi_day_start: true,
-
-        };
-        events = [];
+    let events = [];
 
 
-        EVDB.API.call("/events/search", oArgs, function(oData) {
+    EVDB.API.call("/events/search", oArgs, function(oData) {
 
-            let name, info;
-            let address = '';
-            let eventsArr = oData.events.event;
-
-
-            for (var i in eventsArr) {
-
-                  if( eventsArr[i].description === null){
-                    info = '<p class="description">There is no information for this event.</p>' ;
-                  }
-                  else if (eventsArr[i].description.length > 250){
-                    //console.log(eventsArr[i].title+ ' Desc:' +  eventsArr[i].description) ;
-                    
-                    info = '<div class="description">' +
-                              '<div class="more">' + eventsArr[i].description + '</div>' +
-                              '<div class="toggle-div"><span class="toggle-btn"> More>>></span></div>' +
-                            '</div>';
-                    
-                    // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
-                    // console.log(eventsArr[i].description.substring(0, 250).length)
-                   }
-                  else{
-                    info = '<p class="description">' + eventsArr[i].description + '</p>' ;
-                  }
-
-                  if ( eventsArr[i].stop_time === null){
-                    stopTime = 'Not provided';
-                  }
-                  else{
-                    stopTime = moment(new Date(eventsArr[i].stop_time)).format('dddd, MMMM Do, h:mm a') ;
-                  }
-
-                  if( eventsArr[i].image === null ){
-                    imageURL = '';
-                  }
-                  else{
-                    imageURL = eventsArr[i].image.medium.url;
-                  }
-
-                 address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
-                 
-                  events.push({
-                        name: eventsArr[i].title,
-                        address: address,
-                        description: info,
-                        url: eventsArr[i].url,
-                        image: imageURL,
-                        venue: eventsArr[i].venue_name,
-                        startTime: moment(new Date(eventsArr[i].start_time)).format('dddd, MMMM Do, h:mm a'),
-                        stopTime: stopTime
-                    });
+        let name, info;
+        let address = '';
+        let eventsArr = oData.events.event;
 
 
-            } // end for loop
+        for (var i in eventsArr) {
 
-          showEvents(events);
-        }); // end api call
+              if( eventsArr[i].description === null){
+                info = '<p class="description">There is no information for this event.</p>' ;
+              }
+              else if (eventsArr[i].description.length > 250){
+                //console.log(eventsArr[i].title+ ' Desc:' +  eventsArr[i].description) ;
+                
+                info = '<div class="description">' +
+                          '<div class="more">' + eventsArr[i].description + '</div>' +
+                          '<div class="toggle-div"><span class="toggle-btn"> More>>></span></div>' +
+                        '</div>';
+                
+                // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
+                // console.log(eventsArr[i].description.substring(0, 250).length)
+               }
+              else{
+                info = '<p class="description">' + eventsArr[i].description + '</p>' ;
+              }
 
-// restaurant ajax call from P. Hussey
-// adapted by K. Davis to get restaurants close to user geolocation
+              if ( eventsArr[i].stop_time === null){
+                stopTime = 'Not provided';
+              }
+              else{
+                stopTime = moment(new Date(eventsArr[i].stop_time)).format('dddd, MMMM Do, h:mm a') ;
+              }
+
+              if( eventsArr[i].image === null ){
+                imageURL = '';
+              }
+              else{
+                imageURL = eventsArr[i].image.medium.url;
+              }
+
+             address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+              console.log(eventsArr[i].title + ' address: ' + address);
+              events.push({
+                    name: eventsArr[i].title,
+                    address: address,
+                    description: info,
+                    url: eventsArr[i].url,
+                    image: imageURL,
+                    venue: eventsArr[i].venue_name,
+                    startTime: moment(new Date(eventsArr[i].start_time)).format('dddd, MMMM Do, h:mm a'),
+                    stopTime: stopTime
+                });
+
+
+        } // end for loop
+
+      showEvents(events);
+    }); // end api call
+}//end getEventData function
+
+//makes the API call for restaurant data, then calls the function to place them on the map
+function getRestaurantData(keyWord, lat, long, radius ) {
+  // restaurant ajax call from P. Hussey
+    // adapted by K. Davis to get restaurants close to user geolocation
     var restData = [];
-    console.log(keyWord);
-    var queryURL = "https://developers.zomato.com/api/v2.1/search?q="+keyWord+"&count=15&lat="+userPos.lat+"&lon="+userPos.lng+"&radius="+radius+"sort=cost&order=asc";
+    // console.log(keyWord); 
+    var queryURL = "https://developers.zomato.com/api/v2.1/search?q="+ keyWord +"&count=15&lat="+ lat +"&lon="+ long +"&radius="+radius+"sort=cost&order=asc";
     var key = "1d78eb50e1194c317037b03a6ab3118e";
+
     $.ajax({
             url: queryURL,
             method: "GET",
@@ -447,40 +396,141 @@ var events = [];
         })
         .done(function(response) {
             restData = [];
-            results = response.restaurants;
+            let results = response.restaurants;
             //console.log(results);
             for (var i = 0; i < results.length; i++) {
+
                 var a = {
                     name: results[i].restaurant.name,
                     location: results[i].restaurant.location.address,
                     cost: results[i].restaurant.average_cost_for_two,
                     menu: results[i].restaurant.menu_url
                 }; //!a could grow depending on additional info that we need
+                console.log("Restaurant address+ " + a.location);
                 restData.push(a);
             } //ends for loop
             showRestaurants(restData);
             //console.log(restData);
       }); //ends done function
+}//end getRestaurantData function
 
-      //   } // ends else statements for valid input           
-      // } // end input for loop
- });  // end submit click function
+//retrieves user input, adds it to the map and to firebase
+function searchUserInput(){
+      //prevent default form submit action
+      event.preventDefault();
 
-//allows for expansion and contraction of info description
+      // get search radius value
+      var radius = String( $("#radiusSelect").val() );
+      //console.log('radius: '+radius);
 
+      //search input values
+      var keyWord = $("#restSearch").val();
+      var eventKeyWord = $("#eventSearch").val();
 
+      //sets search location based on user lat and long
+      var where = userPos.lat+','+userPos.lng;
+      //formats date for event api call
+      var when = $("#inputDate").val().replace(/-/g,'')+'00';
+      //populates map with user's events search
+      getEventData( eventKeyWord, where, radius, when);
+      //populates map with user's restaurants search
+      getRestaurantData(keyWord, userPos.lat, userPos.lng, radius);  
+      //console.log(when);
+
+      //gets user name for firebase tracking
+      var user = $('#userName').val().trim();
+      if( user == ''){
+        //if no name entered, call them Anonymous with a random number between 0 and 1023
+        user = 'Anonymous' + Math.floor( Math.random() * 1024 );
+      }
+      //blanks out userName field
+      $('#userName').val('');
+
+      //adds user search data to firebase so other connected users can see it
+      db.ref( user ).set({lat: userPos.lat, 
+                          long: userPos.lng, 
+                          radius: radius, 
+                          eventSearch: eventKeyWord, 
+                          restSearch: keyWord, 
+                          date: when
+                          }).then(function() {
+                            //after data added to firebase, sets this user as current-user for highlighting
+                            //change previously selected user to not selected
+                            let currSelection = $('[current-user="yes"')
+                            currSelection.attr('current-user', 'no')
+                            //set new user as currently selected
+                            $('#' + user).attr('current-user', 'yes');
+                            //adds listener to this user so it removes firebase data on disconnect
+                            db.ref( user ).onDisconnect().remove(function(){
+                            });
+                          })
+      console.log(user);
+}//end searchUserInput function
+
+// document ready statements here
+$(document).ready(function(){
+
+  // it will be necessary to  track markers in order to unset them so here're arrays to help with that
+  eventMarkers = [];
+  restaurantMarkers = [];
+  //format today's date to ISO standard
+  let tempDate = moment( new Date()).format('YYYY-MM-DD');
+  //set default search date to today's date
+  $('#inputDate').val(tempDate);
+
+  //runs function to add user search inputs to map, and to firebase
+  $("#submitButton").on("click", searchUserInput );
 
 }); // end doc ready
 
+db.ref().on('child_added', function( childSnapshot ) {
 
+  //create user name in user display section
+  $('#users').append('<div class="user" current-user="no" id="' + childSnapshot.key + '">' + childSnapshot.key + '</div>');
+
+  } , function( errorObject){
+  console.log("Errors handled: " + errorObject.code);
+});//end child added block
+
+
+db.ref().on('child_removed', function( childSnapshot ) {
+  //remove user data from the DOM when a child is removed from firebase
+  $('#' + childSnapshot.key).remove(); 
+
+  } , function( errorObject){
+  console.log("Errors handled: " + errorObject.code);
+}); //end child removed block
+
+  
 
 $(document).on('click', '.toggle-div', function(){
-      if( $(this).children().text() == ' More>>>' ){
+      if( $(this).children().text() == ' More>>>' ){ //show text and change toggle text to Less
           $(this).children().text(' <<<Less');
           $(this).siblings().css({'overflow': 'auto', 'height': 'auto'})
-      }
-      else{
+      } //end if block
+      else{ //hide text and change toggle text to More
           $(this).children().text(' More>>>');
           $(this).siblings().css({'overflow': 'hidden', 'height': '100px'})
-      }
-});
+      } //end else blocl
+});//end toggle click function
+
+//when user name is clicked on, will set them as active user and show their search data
+$(document).on('click', '.user', function(){
+    //change currently selected user to not selected
+    let currSelection = $('[current-user="yes"')
+    currSelection.attr('current-user', 'no')
+    //set selected user to selected attribute for highlighting purposes
+    console.log("This user selected: " + $(this).attr('id') );
+    $(this).attr('current-user', 'yes');
+    //get user search data from firebase
+    db.ref( $(this).attr('id') ).once('value').then(function(snapshot){
+      let data = snapshot.val();
+      let where = data.lat+','+data.long;
+      //populate selected user's events on map
+      getEventData( data.eventSearch, where, data.radius, data.date);
+      //populate selected user's restaurants on map
+      getRestaurantData(data.restSearch, data.lat, data.long, data.radius); 
+
+    }) //end firebase call
+
+}); //end .user click function
