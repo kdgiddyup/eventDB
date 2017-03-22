@@ -106,16 +106,6 @@ function handleLocationError(error) {
             break;
     }
 }
-/***** start of Patrick code *********
-
-//starts adaptive coding
-var pinColor = "da3838";
-var context = {one:["Start time","Stop time", "More info", "Find out about tickets and prices here"],
-                    two:["Average cost for two", "Overall user rating", "Types of food", "See photos and their menu here"]};
-// function to add multiple markers from search response
-
-******** end Patrick code block *******/
-/**************************************/
 
 // resultData will be array of objects in format:
 // [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
@@ -133,18 +123,7 @@ function showEvents(resultData) {
     // restaurant or event? determines marker color later
     var type = 'event';
 
-/******** start of Patrick code *********/
-/*
-function showEvents(resultData,controller) { 
-    //controller is used to switch text in context object and pin color        
-    pinColor = "da3838";
-    var txt = context.one;
-    if (controller === 1){
-    pinColor = "1a7d1a";
-    txt = context.two;
-    }
-********** end of Patrick code block *******
-*******************************************/
+
     // resultData should be an array of event objects
     for (var i=0;i<resultData.length;i++) {
       var thisEvent = resultData[i];
@@ -163,18 +142,6 @@ function showEvents(resultData,controller) {
             '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">More info and tickets</a></p>'+
             '</div>'; // end markerInfo
 
-/********* alternative markerInfo option from Patrick *****
-      var markerInfo = new google.maps.InfoWindow({
-        //the txt variable allows us to reuse this function but with different text
-        content: '<div class="infoWindow"><h2>'+thisEvent.name+'</h2>'+
-            thisEvent.image+
-            '<p><span class="leadin">Address:</span> '+thisEvent.address+'</p>'+
-            '<p><span class="leadin">'+txt[0]+':</span> '+thisEvent.startTime+'</span></p>'+
-            '<p><span class="leadin">'+txt[1]+':</span> '+thisEvent.stopTime+'</span></p>'+
-            '<p><span class="leadin">'+txt[2]+':</span></p><p class="description">'+thisEvent.description+'</p>'+
-            '<p><span class="info_link"><a href="'+thisEvent.url+'" target="_blank">'+txt[3]+'</a></p>'+'</div>'
-          }); // end markerInfo object
-************************************************************/
 
 // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
     geocode (thisEvent.address, markerInfo, eventMarkers, type);
@@ -271,18 +238,7 @@ function addMarker(pos,windowInfo,_markers,type){
           fillOpacity: 1
           } 
         });            
-/******** alternative addMarker from Patrick *************
-function addMarker(pos,windowInfo){
-        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
-        new google.maps.Size(21, 34),
-        new google.maps.Point(0,0),
-        new google.maps.Point(10, 34));
-    var marker = new google.maps.Marker({
-        position: pos,
-        map: map,
-        icon: pinImage
-    });
-************************************************************/
+
     // clicking on marker opens info window
       // marker.addListener('click', function() {
       //    // update infowindow content
@@ -354,7 +310,7 @@ var events = [];
           // add inputs to the inputs array
           inputs.push($(this))
         });
-
+var eventKeyWord = $("#eventSearch").val();
         // loop through array and check for required data attribute and blank values
         for (var i=0;i<inputs.length;i++){
           if ($(inputs[i]).attr("data-required")=="required") {
@@ -374,7 +330,7 @@ var events = [];
 
             app_key: 'GRMfQ3CqpWsGdfXM',
 
-            q: "",
+            q: eventKeyWord,
 
             // to do: need an ajax call to get zip from geolocated lat/lng
             // not sure why this would be needed. lat/lng is already being used for 'where'
@@ -453,7 +409,9 @@ var events = [];
 // restaurant ajax call from P. Hussey
 // adapted by K. Davis to get restaurants close to user geolocation
     var restData = [];
-    var queryURL = "https://developers.zomato.com/api/v2.1/search?q=&count=15&lat="+userPos.lat+"&lon="+userPos.lng+"&sort=cost&order=asc";
+    var keyWord = $("#restSearch").val();
+    console.log(keyWord);
+    var queryURL = "https://developers.zomato.com/api/v2.1/search?q="+keyWord+"&count=15&lat="+userPos.lat+"&lon="+userPos.lng+"&radius="+radius+"sort=cost&order=asc";
     var key = "1d78eb50e1194c317037b03a6ab3118e";
     $.ajax({
             url: queryURL,
@@ -486,42 +444,6 @@ var events = [];
 //allows for expansion and contraction of info description
 
 
-/********* test code from Patrick ****************
-//declared globally for passing into other functions
-  var restData = [];
-
-    $("#restTester").on("click",
-        function restSearch() {
-            var queryURL = "https://developers.zomato.com/api/v2.1/search?q=mexican&count=15&lat=32.039347819445&lon=-81.108557106944&sort=cost&order=asc";
-            var key = "1d78eb50e1194c317037b03a6ab3118e";
-            $.ajax({
-                    url: queryURL,
-                    method: "GET",
-                    beforeSend: function(request) {
-                        request.setRequestHeader("user-key", key);
-                    },
-                })
-                .done(function(response) {
-                    restData = [];
-                    results = response.restaurants;
-                    console.log(results);
-                    for (var i = 0; i < results.length; i++) {
-                        var a = {
-                            "name": results[i].restaurant.name,
-                            "address": results[i].restaurant.location.address, 
-                            "startTime": results[i].restaurant.average_cost_for_two,
-                            "stopTime": results[i].restaurant.user_rating.aggregate_rating,
-                            "description":results[i].restaurant.cuisines,
-                            "image":results[i].restaurant.thumb,
-                            "url":results[i].restaurant.url,
-                    }; //!a could grow depending on additional info that we need
-                        restData.push(a);
-                    } //ends for loop
-                    console.log(restData);
-                showEvents(restData, 1);
-                }); //ends done function
-        }); //ends restSearch function
-**************************************************/
 
 }); // end doc ready
 
