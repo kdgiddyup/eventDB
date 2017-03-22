@@ -88,7 +88,6 @@ window.onload = function() {
 
   }//end window.onload
 
-
 // handle errors that occur during attempted browser geolocation
 function handleLocationError(error) {
     switch(error.code) {
