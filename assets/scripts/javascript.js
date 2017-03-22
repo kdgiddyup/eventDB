@@ -283,11 +283,6 @@ function geocode( address,info,markerArray,type ){
   }); // end ajax done function
 }
 
-
-//makes the API call for event data, then calls the function to place them on the map
-function getEventData(eventKeyWord, where, radius, when) {
-    var oArgs = {
-
         app_key: 'GRMfQ3CqpWsGdfXM',
 
         q: eventKeyWord,

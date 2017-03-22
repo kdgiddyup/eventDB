@@ -12,26 +12,26 @@ body, html {
     height: 100%;
     overflow: hidden;
     background-color: grey;
-    /*position: relative;*/
 }
- 
+
 #mapControls {
 	position: absolute;
 	top: 40px;
 	left: 50px;
-    background: linear-gradient( to right, #fff , 85%, rgba(255, 255, 255, 0.1));
+    background: linear-gradient( to right, #fff , 90%, rgba(255, 255, 255, 0.1));
     opacity: .80;
     padding: 20px;
-    height: 79%;
+    height: 72%;
     width: 25%;
     min-width: 300px;
+    /*overflow: auto; */
 }
 #eventOutput {
     margin: 0 0 20px 0;
 }
 
 #eventOutput, #restOutput {
-    height: 36%;
+    height: 38%;
     overflow: auto;
 }
 
