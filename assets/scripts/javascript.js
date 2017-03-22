@@ -156,12 +156,8 @@ function showEvents(resultData) {
    
    // display events in HTML
     var eventBlock = $("<div>").addClass('outputBlock');
-<<<<<<< HEAD
-    $(eventBlock).append("<h3>"+thisEvent.name+"</h3><p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
-=======
     $(eventBlock).append("<h3>"+thisEvent.name+"</h3>"+"<p>"+thisEvent.venue+"</p>"+"<p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
       
->>>>>>> master
     $("#eventOutput").append(eventBlock);
     } // end results loop
 
@@ -321,16 +317,10 @@ var events = [];
           // add inputs to the inputs array
           inputs.push($(this))
         });
-<<<<<<< HEAD
-    var keyWord = $("#restSearch").val();
-var eventKeyWord = $("#eventSearch").val();
-=======
-
         
         var keyWord = $("#restSearch").val();
         var eventKeyWord = $("#eventSearch").val();
 
->>>>>>> 108cce70d6425a9d4a1219acb195cc3720dc097f
         // loop through array and check for required data attribute and blank values
         // for (var i=0;i<inputs.length;i++){
         //   if ($(inputs[i]).attr("data-required")=="required") {
