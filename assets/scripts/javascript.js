@@ -160,7 +160,6 @@ function showRestaurants(resultData) {
     $("#restOutput").empty().append("<h2>Dining</h2>");
 
     // reset restaurant markers array
-    restaurantMarkers = [];
     
     // is this event or restaurant? determines marker color later
     var type = 'restaurant';
@@ -168,7 +167,6 @@ function showRestaurants(resultData) {
     // resultData should be an array of restaurant objects
     for (var i=0;i<resultData.length;i++) {
       var thisRestaurant = resultData[i];
-
       // does menu exist? put some html around it, too
       if (thisRestaurant.menu != '')
           thisRestaurant.menu = '<p><span class="info_link"><a href="'+thisRestaurant.menu+'" target="_blank">Menu</a></p>';
@@ -367,10 +365,10 @@ var eventKeyWord = $("#eventSearch").val();
                   }
                   else if (eventsArr[i].description.length > 250){
                     console.log(eventsArr[i].title+ ' Desc:' +  eventsArr[i].description) ;
-                    console.log('---------------------------------------');
-                    info = '<span class="teaser">' + eventsArr[i].description.substring(0, 250) + '</span>' +
+                    
+                    info = '<div class = "containment">' +
                            '<span class="complete">' + eventsArr[i].description + '</span>' +
-                           '<span class="more"> More>>></span>';
+                           '<span class="more"> More>>></span>' + '</div>';
                     
                     // console.log(eventsArr[i].title + " teaser is: " + eventsArr[i].description.substring(0, 250))
                     // console.log(eventsArr[i].description.substring(0, 250).length)
