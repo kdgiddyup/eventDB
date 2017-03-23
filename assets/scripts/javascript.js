@@ -359,7 +359,6 @@ function getEventData(eventKeyWord, where, radius, when) {
               }
 
              address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
-              console.log(eventsArr[i].title + ' address: ' + address);
               events.push({
                     name: eventsArr[i].title,
                     address: address,
@@ -517,13 +516,8 @@ $(document).on('click', '.toggle-div', function(){
 
 //when user name is clicked on, will set them as active user and show their search data
 $(document).on('click', '.user', function(){
-    //change currently selected user to not selected
-    let currSelection = $('[current-user="yes"');
-    currSelection.attr('current-user', 'no');
-    //set selected user to selected attribute for highlighting purposes
-    $(this).attr('current-user', 'yes');
     //get user search data from firebase
-    var x = Math.random(0 , 1);
+    var x = Math.random();
     db.ref( $(this).attr('id') ).update({
       currentUser: x
     });
@@ -537,5 +531,10 @@ $(document).on('click', '.user', function(){
       getRestaurantData(data.restSearch, data.lat, data.long, data.radius); 
 
     }); //end firebase call
+    //change currently selected user to not selected
+//    let currSelection = $('[current-user="yes"');
+//    currSelection.attr('current-user', 'no');
+//    //set selected user to selected attribute for highlighting purposes
+//    $(this).attr('current-user', 'yes');
 
 }); //end .user click function
