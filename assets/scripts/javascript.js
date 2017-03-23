@@ -523,7 +523,7 @@ $(document).on('click', '.user', function(){
     //set selected user to selected attribute for highlighting purposes
     $(this).attr('current-user', 'yes');
     //get user search data from firebase
-    let x = Math.random(0 , 1);
+    var x = Math.random(0 , 1);
     db.ref( $(this).attr('id') ).update({
       currentUser: x
     });
