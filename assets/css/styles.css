@@ -1,4 +1,4 @@
-body {
+body, html {
     width: 100%;
     height: 100%;
     position: relative;
@@ -9,7 +9,7 @@ body {
 
 #map {
     width: 100%;
-    height: 1000px;
+    height: 100%;
     overflow: hidden;
     background-color: grey;
 }
@@ -18,17 +18,21 @@ body {
 	position: absolute;
 	top: 40px;
 	left: 50px;
-    background-color: #fff;
-    opacity: .75;
+    background: linear-gradient( to right, #fff , 90%, rgba(255, 255, 255, 0.1));
+    opacity: .80;
     padding: 20px;
-    height: 72%;
+
+    /* Michael changed the height from 72% to 100% 3.23.17 @ 14:05 */
+    height: 100%;
     width: 25%;
     min-width: 300px;
     /*overflow: auto; */
 }
+
 #eventOutput {
     margin: 0 0 20px 0;
 }
+
 #eventOutput, #restOutput {
     height: 38%;
     overflow: auto;
@@ -37,15 +41,50 @@ body {
 .leadin {
 	font-weight: bold;
 }
+
 .infoWindow .description {
-	max-height: 250px;
+	/*max-height: 250px;*/
 	overflow: auto;
 	overflow-wrap: break-word;
 }
-
 .infoWindow img {
 	width: 100%;
 }
+
 input.blank {
     background-color: red;
+}
+
+select{
+    display: inline;
+}
+
+.toggle-btn{
+    background:lightblue;
+    color:navy;
+    font-size:13px;
+    /*padding:3px;*/
+    cursor:pointer;
+}
+
+.more{
+    overflow: hidden;
+    height: 100px;
+}
+
+h3{
+    font-size: 24px;
+}
+
+h2{
+    font-size: 36px;
+}
+
+.user:hover{
+    cursor: pointer;
+    background-color: #ddd;
+}
+
+.user[current-user='yes']{
+    background-color: #aaa;
 }

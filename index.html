@@ -9,51 +9,84 @@
 	    <meta name="author" content="">
 	    <meta name="apple-mobile-web-app-capable" content="yes">
 	    <meta property="og:image" content=""/>
-		<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
-		<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection">
 		<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
+		<link type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.css">
+		<link href="assets/css/styles.css" type="text/css" rel="stylesheet">
 	    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmK1XtRt48lGcJC9249vs6gGmNAelrFpQ"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.js"></script>
 	    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/28/6/common.js"></script>
 		<script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/28/6/util.js"></script>
-		<script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/28/6/stats.js"></script>
-	    <link href="assets/css/styles.css" type="text/css" rel="stylesheet">
+		<script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/28/6/stats.js"></script>    
    		<script type="text/javascript" src="http://api.eventful.com/js/api"></script>
-   		<link type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.css">
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.js"></script>
-		<link type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.css">
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.js"></script>
+   		<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+   		<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
 
 		<style>
-			.complete{
-			    display: none;
-			}
 
-			.more{
-			    background:lightblue;
-			    color:navy;
-			    font-size:13px;
-			    padding:3px;
-			    cursor:pointer;
-			}
 		</style>
 	  <title>A night out in [you are here], powered by FBM</title>
 	 </head>
 	 <body>
+
+		
+			<div class="navbar-fixed"> 
+				<nav class="#009688 teal">
+					<div class="nav-wrapper headerTitle">
+						<h3>
+							FLEE
+						</h3>
+					</div>
+					<div class="headerSubtitle">
+						<p>
+							Wanna get away?
+						</p>	
+					</div>
+				</nav>
+			</div>
+		
+
 		<div id="map"></div>
+
+		
+
+		
 		<div id="mapControls">
 			<form>
+
+				<p>
+					Who are you?
+				</p>
+			
+				<input id="userName" type="text" placeholder="Enter your name" class="input-field validate">
 				<p>
 					When's the big night?
 				</p>
 				<div>
 					<input data-required="required" type="date" id="inputDate"/>
 				</div>
+				
+				
+				<!--Radius Search-->
 				<div>
-					<input data-required="" id="submitButton" type="submit" value="Your night awaits">
-					</div>
+					<p>
+						Search Radius (in mi)
+					</p>
+					<form action="#">
+    					<p class="range-field">
+      					<input type="range" min="0" max="100"id="radiusSelect"/>
+    					</p>
+  					</form>
+				</div>
+				
+
+				<!--Event Type-->
+
+
+				<!-- <label for="radiusSelect"><br>Search Radius: </label>
 				<select id="radiusSelect" placeholder="Search radius">
 					<option type="radiusOption" value="1">1</option>
 					<option type="radiusOption" value="5">5</option>
@@ -61,9 +94,100 @@
 					<option type="radiusOption" value="20">20</option>
 					<option type="radiusOption" value="30">30</option>
 
-				</select><br>
-				<input id = "restSearch" type = 'text'  placeholder="Search for food options">
-				<input id = "eventSearch" type = 'text' placeholder="Search for events">
+				</select> -->
+
+				<br>
+
+				<!--Food Type-->
+				<p>
+					What kind of food do you like?
+				</p>
+
+					<ul class="collapsible" data-collapsible="accordion">
+						<li>
+
+						<!--Dropdown food options-->
+						<div class="collapsible-header">Here are a few choices</div>
+							<div class="collapsible-body">
+								<p>
+									<input type="checkbox" class="restSearch" id="mex"/>
+		      						<label for="mex">Mexican</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox" class="restSearch" id="american"/>
+		      						<label for="american">American</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox"  class="restSearch" id="italia"/>
+		      						<label for="italia">Italian</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox" class="restSearch" id="asian"/>
+		      						<label for="asian">Asian</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox" class="restSearch" id="junk"/>
+		      						<label for="junk">Junk</label>
+		      					</p>
+							</div>
+						</li>
+					</ul>
+
+
+						<!--Input food options-->
+						<div>
+							<input id="restSearch" type="text" class="restSearch" placeholder="Search for food options">
+						</div>
+						
+					
+					<br>
+
+				<!--Event Type-->
+				<p>
+					What kind of event do you wanna go to?
+				</p>
+
+				<ul class="collapsible" data-collapsible="accordion">
+					<li>
+						<div class="collapsible-header">Event Types</div>
+						<div class="collapsible-body">
+							<p>
+								<input type="checkbox" class="eventSearch" id="business"/>
+	      						<label for="business">Business</label>
+	      					</p>
+	      					<p>
+	      						<input type="checkbox" class="eventSearch" id="sporting"/>
+	      						<label for="sporting">Sporting</label>
+	      					</p>
+	      					<p>
+	      						<input type="checkbox"  class="eventSearch" id="sc"/>
+	      						<label for="sc">Seminar / Conference</label>
+	      					</p>
+	      					<p>
+	      						<input type="checkbox" class="eventSearch" id="music"/>
+	      						<label for="music">Music</label>
+	      					</p>
+	      				</div>
+					</li>
+				</ul>
+				<input id ="eventSearch" type="text" placeholder="Search for events">
+
+
+
+
+				<!--List of Users-->
+				<p>
+					Users
+				</p>
+				<div class="input-field validate" id="users"></div>
+
+				<br>
+
+
+				<!--Submit Button-->
+				<div>
+					<input data-required="" id="submitButton" type="submit" class="btn" value="Flee!">
+				</div>
 
 			</form>
 			
@@ -71,7 +195,7 @@
 			
 			<div id="restOutput"></div>
 		</div>
-
+	
 
 		<!-- keep this script at the bottom, above <body> tag -->
 
