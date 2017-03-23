@@ -107,7 +107,6 @@ function handleLocationError(error) {
     switch(error.code) {
         case error.PERMISSION_DENIED:
             console.log("User denied geolocation.");
-            map.setCenter(mapCenter);
             break;
         case error.POSITION_UNAVAILABLE:
             console.log("Location information is unavailable.")
@@ -118,7 +117,8 @@ function handleLocationError(error) {
         case error.UNKNOWN_ERROR:
             console.log("An unknown error occurred.")
             break;
-    }
+  }
+            map.setCenter(mapCenter);
 }
 
 // resultData will be array of objects in format:
@@ -405,12 +405,10 @@ function getRestaurantData(keyWord, lat, long, radius ) {
                     location: results[i].restaurant.location.address,
                     cost: results[i].restaurant.average_cost_for_two,
                     menu: results[i].restaurant.menu_url
-                }; //!a could grow depending on additional info that we need
-                console.log("Restaurant address+ " + a.location);
+                }; 
                 restData.push(a);
             } //ends for loop
             showRestaurants(restData);
-            //console.log(restData);
       }); //ends done function
 }//end getRestaurantData function
 
@@ -443,28 +441,26 @@ function searchUserInput(){
         //if no name entered, call them Anonymous with a random number between 0 and 1023
         user = 'Anonymous' + Math.floor( Math.random() * 1024 );
       }
-      //blanks out userName field
-      $('#userName').val('');
-
       //adds user search data to firebase so other connected users can see it
-      db.ref( user ).set({lat: userPos.lat, 
+      db.ref( user ).set({
+                          lat: userPos.lat, 
                           long: userPos.lng, 
                           radius: radius, 
                           eventSearch: eventKeyWord, 
                           restSearch: keyWord, 
-                          date: when
-                          }).then(function() {
+                          date: when,
+                          currentUser: 0
+                        }).then(function() {
                             //after data added to firebase, sets this user as current-user for highlighting
                             //change previously selected user to not selected
-                            let currSelection = $('[current-user="yes"')
+                            let currSelection = $('current-user="yes"');
                             currSelection.attr('current-user', 'no')
                             //set new user as currently selected
                             $('#' + user).attr('current-user', 'yes');
                             //adds listener to this user so it removes firebase data on disconnect
                             db.ref( user ).onDisconnect().remove(function(){
                             });
-                          })
-      console.log(user);
+                          });
 }//end searchUserInput function
 
 // document ready statements here
@@ -484,9 +480,14 @@ $(document).ready(function(){
 }); // end doc ready
 
 db.ref().on('child_added', function( childSnapshot ) {
-
   //create user name in user display section
   $('#users').append('<div class="user" current-user="no" id="' + childSnapshot.key + '">' + childSnapshot.key + '</div>');
+let data = childSnapshot.val();
+      let where = data.lat+','+data.long;
+      //populate selected user's events on map
+      getEventData( data.eventSearch, where, data.radius, data.date);
+      //populate selected user's restaurants on map
+      getRestaurantData(data.restSearch, data.lat, data.long, data.radius); 
 
   } , function( errorObject){
   console.log("Errors handled: " + errorObject.code);
@@ -506,31 +507,35 @@ db.ref().on('child_removed', function( childSnapshot ) {
 $(document).on('click', '.toggle-div', function(){
       if( $(this).children().text() == ' More>>>' ){ //show text and change toggle text to Less
           $(this).children().text(' <<<Less');
-          $(this).siblings().css({'overflow': 'auto', 'height': 'auto'})
+          $(this).siblings().css({'overflow': 'auto', 'height': 'auto'});
       } //end if block
       else{ //hide text and change toggle text to More
           $(this).children().text(' More>>>');
-          $(this).siblings().css({'overflow': 'hidden', 'height': '100px'})
+          $(this).siblings().css({'overflow': 'hidden', 'height': '100px'});
       } //end else blocl
 });//end toggle click function
 
 //when user name is clicked on, will set them as active user and show their search data
 $(document).on('click', '.user', function(){
     //change currently selected user to not selected
-    let currSelection = $('[current-user="yes"')
-    currSelection.attr('current-user', 'no')
+    let currSelection = $('[current-user="yes"');
+    currSelection.attr('current-user', 'no');
     //set selected user to selected attribute for highlighting purposes
-    console.log("This user selected: " + $(this).attr('id') );
     $(this).attr('current-user', 'yes');
     //get user search data from firebase
-    db.ref( $(this).attr('id') ).once('value').then(function(snapshot){
+    let x = Math.random(0 , 1);
+    db.ref( $(this).attr('id') ).update({
+      currentUser: x
+    });
+    db.ref( $(this).attr('id') ).on('value', function(snapshot){
       let data = snapshot.val();
+        console.log(data);
       let where = data.lat+','+data.long;
       //populate selected user's events on map
       getEventData( data.eventSearch, where, data.radius, data.date);
       //populate selected user's restaurants on map
       getRestaurantData(data.restSearch, data.lat, data.long, data.radius); 
 
-    }) //end firebase call
+    }); //end firebase call
 
 }); //end .user click function
