@@ -85,12 +85,3 @@ h2{
 .user[current-user='yes']{
     background-color: #aaa;
 }
-.chat {
-    opacity: 0.8;
-    background: white;
-    position: absolute;
-    top: 50px;
-    right: 200px;
-    width: 40%;
-    height: 50px;
-}
