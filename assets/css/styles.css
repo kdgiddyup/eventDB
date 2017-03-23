@@ -21,11 +21,14 @@ body, html {
     background: linear-gradient( to right, #fff , 90%, rgba(255, 255, 255, 0.1));
     opacity: .80;
     padding: 20px;
-    height: 72%;
+
+    /* Michael changed the height from 72% to 100% 3.23.17 @ 14:05 */
+    height: 100%;
     width: 25%;
     min-width: 300px;
     /*overflow: auto; */
 }
+
 #eventOutput {
     margin: 0 0 20px 0;
 }
