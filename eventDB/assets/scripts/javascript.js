@@ -128,7 +128,8 @@ function showEvents(resultData) {
     // if there are event markers, clear them
     clearMarkers(eventMarkers);
 
-    
+    // clear events output area and restore header
+    $("#eventOutput").empty().append("<h2>Events</h2>");
     
     // reset event markers array
     eventMarkers = [];
@@ -170,7 +171,11 @@ function showEvents(resultData) {
     // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
     geocode (thisEvent.address, markerInfo, eventMarkers, type);
    
-   
+   // display events in HTML
+    var eventBlock = $("<div>").addClass('outputBlock');
+    $(eventBlock).append("<h3>"+thisEvent.name+"</h3>"+"<p>"+thisEvent.venue+"</p>"+"<p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
+      
+    $("#eventOutput").append(eventBlock);
     } // end results loop
 
     // add a marker clusterer library t manage markers that are close together
@@ -186,9 +191,10 @@ function showRestaurants(resultData) {
     // if there are restaurant markers, clear them
     clearMarkers(restaurantMarkers);
     
+    // clear restaurant output area and restore header
+    $("#restOutput").empty().append("<h2>Dining</h2>");
 
     // reset restaurant markers array
-    restaurantMarkers = [];
     
     // is this event or restaurant? determines marker color later
     var type = 'restaurant';
@@ -213,6 +219,11 @@ function showRestaurants(resultData) {
     geocode( thisRestaurant.location, markerInfo, restaurantMarkers, type);
 
 
+    // display restaurants in HTML
+    var restBlock = $("<div>").addClass('outputBlock');
+    $(restBlock).append("<h3>"+thisRestaurant.name+"</h3><p>"+thisRestaurant.location+"</p><p>Average cost: $"+thisRestaurant.cost+"</p>"+thisRestaurant.menu);
+      
+    $("#restOutput").append(restBlock);
 
     } // end results loop
 } // end showRestaurants function
@@ -415,7 +426,6 @@ function searchUserInput(){
       //search input values
       var keyWord = $(".restSearch").val();
       var eventKeyWord = $(".eventSearch").val();
-
 
       //sets search location based on user lat and long
       var where = userPos.lat+','+userPos.lng;

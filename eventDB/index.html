@@ -40,11 +40,11 @@
 							FLEE
 						</h3>
 					</div>
-					<!-- <div class="headerSubtitle">
+					<div class="headerSubtitle">
 						<p>
 							Wanna get away?
 						</p>	
-					</div> -->
+					</div>
 				</nav>
 			</div>
 		
@@ -57,13 +57,11 @@
 		<div id="mapControls">
 			<form>
 
-
 				<p>
 					Who are you?
 				</p>
 			
 				<input id="userName" type="text" placeholder="Enter your name" class="input-field validate">
-
 				<p>
 					When's the big night?
 				</p>
@@ -74,7 +72,6 @@
 				
 				<!--Radius Search-->
 				<div>
-
 					<p>
 						Search Radius (in mi)
 					</p>
@@ -86,8 +83,21 @@
 				</div>
 				
 
+				<!--Event Type-->
 
-				
+
+				<!-- <label for="radiusSelect"><br>Search Radius: </label>
+				<select id="radiusSelect" placeholder="Search radius">
+					<option type="radiusOption" value="1">1</option>
+					<option type="radiusOption" value="5">5</option>
+					<option selected="selected" type="radiusOption" value="10">10</option>
+					<option type="radiusOption" value="20">20</option>
+					<option type="radiusOption" value="30">30</option>
+
+				</select> -->
+
+				<br>
+
 				<!--Food Type-->
 				<p>
 					What kind of food do you like?
@@ -179,10 +189,11 @@
 					<input data-required="" id="submitButton" type="submit" class="btn" value="Flee!">
 				</div>
 
-
 			</form>
 			
-
+			<div id="eventOutput"></div>
+			
+			<div id="restOutput"></div>
 		</div>
 	
 
