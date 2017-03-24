@@ -13,7 +13,9 @@ body, html {
     overflow: hidden;
     background-color: grey;
 }
-
+.headerTitle {
+    padding: 0 0 0 10px;
+}
 #mapControls {
 	position: absolute;
 	top: 60px;
@@ -22,10 +24,9 @@ body, html {
     height: 100%;
     opacity: .80;
     padding: 20px 20px 80px 20px;
-
-
     /* Michael changed the height from 72% to 100% 3.23.17 @ 14:05 */
-    width: 25%;
+    width: 100%;
+    max-width: 450px;
     min-width: 300px;
     overflow: auto; 
 }

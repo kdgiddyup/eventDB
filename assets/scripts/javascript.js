@@ -13,7 +13,9 @@ var db = firebase.database();
 //sets user as global variable for tracking purposes
 var user = '';
 
+
 window.onload = function() {
+
       gm = google.maps;
       map = new google.maps.Map(document.getElementById('map'), {
           zoom: 11,
@@ -65,49 +67,59 @@ window.onload = function() {
         lat: 32.080816,
         lng:-81.094950 
       };
+      defaultPlace = '<strong>City Market</strong>';
+      
+      // default for label will be false; ie, geolocating fails 
+      label = false;
+
       // userPos isn't exactly where we want map centered, since we need space for an interface; on wider screens, offset longitude to push map to right
       if (window.innerWidth > 1000) {
-          var lngOffset = 0;
-          var latOffset = -.1;
+          var lngOffset = -.15;
       } else {
-          var lngOffset = .1;
-          var latOffset = -.1;
+          var lngOffset = 0;
       }
       mapCenter = {
-          lat: userPos.lat + latOffset,
-          lng: userPos.lng - lngOffset
+          lat: userPos.lat,
+          lng: userPos.lng + lngOffset
         }
      // now, if we geolocate, we can override the default position
       if (navigator.geolocation) {
 
+          // set label to 'you are here'
+          label= true;
+
+          // attempt to get user position
           navigator.geolocation.getCurrentPosition(function(position) {
               // create geolocation object of user's position
               userPos.lat = position.coords.latitude;
               userPos.lng = position.coords.longitude;
-              
               // calculate new map center
               mapCenter = {
-                lat: userPos.lat + latOffset,
+                lat: userPos.lat,
                 lng: userPos.lng + lngOffset
               } 
               // update map object with new center location
               map.setCenter(mapCenter);
+              addUserMarker(label);
           }, handleLocationError         
         )
       }
       else {
           // Browser doesn't support Geolocation
           map.setCenter(mapCenter);
+          label = false;
           console.log('Browser doesn\'t support Geolocation')
       }
 }//end window.onload
 
 // handle errors that occur during attempted browser geolocation
 function handleLocationError(error) {
+    map.setCenter(mapCenter);
+    label=false;
+    addUserMarker(label);
     switch(error.code) {
         case error.PERMISSION_DENIED:
             console.log("User denied geolocation.");
-            map.setCenter(mapCenter);
             break;
         case error.POSITION_UNAVAILABLE:
             console.log("Location information is unavailable.")
@@ -119,8 +131,37 @@ function handleLocationError(error) {
             console.log("An unknown error occurred.")
             break;
     }
+                
 }
+$(".datepicker").pickadate({});
 
+function addUserMarker(geoLocated){
+  if (geoLocated)
+    var userLabel = '<strong>You are here</strong>'
+  else
+    var userLabel = defaultPlace;
+   // instanstiate a marker object
+    var userPin = new google.maps.Marker({
+        position: userPos,
+        map: map,
+        desc: userLabel,
+        animation: google.maps.Animation.DROP,
+        icon: {                                          
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 9,
+          fillColor: 'yellow',
+          strokeColor: 'lightyellow',                       
+          strokeWeight: 1,
+          fillOpacity: 1
+          } 
+        });
+      
+    userPin.addListener("click", function() {
+      infowindow.setContent(userPin.desc);
+      infowindow.open(map,userPin);
+      });      
+    userPin.setMap(map);
+}
 
 function showEvents(resultData) { 
     // if there are event markers, clear them
@@ -485,6 +526,19 @@ function searchUserInput(){
       let numEvents =  15;
       //prevent default form submit action
       event.preventDefault();
+
+      $("#mapControls").off().animate({
+        height: 30,
+        "max-width": "100%"
+        },500, function(){
+          $("#mapControls").css("cursor","pointer").on("click",function(){
+            $(this).animate({
+              height: "100%",
+              "max-width": 450
+            })
+       });
+      });
+      
 
       // get search radius value
       var radius = String( $("#radiusSelect").val() );
