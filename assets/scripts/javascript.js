@@ -12,7 +12,9 @@ firebase.initializeApp(config);
 var db = firebase.database();
 
 
+
 window.onload = function() {
+
       gm = google.maps;
       map = new google.maps.Map(document.getElementById('map'), {
           zoom: 11,
@@ -64,39 +66,47 @@ window.onload = function() {
         lat: 32.080816,
         lng:-81.094950 
       };
+      defaultPlace = '<strong>City Market</strong>';
+      
+      // default for label will be false; ie, geolocating fails 
+      label = false;
+
       // userPos isn't exactly where we want map centered, since we need space for an interface; on wider screens, offset longitude to push map to right
       if (window.innerWidth > 1000) {
-          var lngOffset = 0;
-          var latOffset = -.1;
+          var lngOffset = -.15;
       } else {
-          var lngOffset = .1;
-          var latOffset = -.1;
+          var lngOffset = 0;
       }
       mapCenter = {
-          lat: userPos.lat + latOffset,
-          lng: userPos.lng - lngOffset
+          lat: userPos.lat,
+          lng: userPos.lng + lngOffset
         }
      // now, if we geolocate, we can override the default position
       if (navigator.geolocation) {
 
+          // set label to 'you are here'
+          label= true;
+
+          // attempt to get user position
           navigator.geolocation.getCurrentPosition(function(position) {
               // create geolocation object of user's position
               userPos.lat = position.coords.latitude;
               userPos.lng = position.coords.longitude;
-              
               // calculate new map center
               mapCenter = {
-                lat: userPos.lat + latOffset,
+                lat: userPos.lat,
                 lng: userPos.lng + lngOffset
               } 
               // update map object with new center location
               map.setCenter(mapCenter);
+              addUserMarker(label);
           }, handleLocationError         
         )
       }
       else {
           // Browser doesn't support Geolocation
           map.setCenter(mapCenter);
+          label = false;
           console.log('Browser doesn\'t support Geolocation')
       }
 
@@ -104,6 +114,9 @@ window.onload = function() {
 
 // handle errors that occur during attempted browser geolocation
 function handleLocationError(error) {
+    map.setCenter(mapCenter);
+    label=false;
+    addUserMarker(label);
     switch(error.code) {
         case error.PERMISSION_DENIED:
             console.log("User denied geolocation.");
@@ -117,10 +130,38 @@ function handleLocationError(error) {
         case error.UNKNOWN_ERROR:
             console.log("An unknown error occurred.")
             break;
-  }
-            map.setCenter(mapCenter);
+    }
+                
 }
+$(".datepicker").pickadate({});
 
+function addUserMarker(geoLocated){
+  if (geoLocated)
+    var userLabel = '<strong>You are here</strong>'
+  else
+    var userLabel = defaultPlace;
+   // instanstiate a marker object
+    var userPin = new google.maps.Marker({
+        position: userPos,
+        map: map,
+        desc: userLabel,
+        animation: google.maps.Animation.DROP,
+        icon: {                                          
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 9,
+          fillColor: 'yellow',
+          strokeColor: 'lightyellow',                       
+          strokeWeight: 1,
+          fillOpacity: 1
+          } 
+        });
+      
+    userPin.addListener("click", function() {
+      infowindow.setContent(userPin.desc);
+      infowindow.open(map,userPin);
+      });      
+    userPin.setMap(map);
+}
 // resultData will be array of objects in format:
 // [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
 
@@ -128,8 +169,7 @@ function showEvents(resultData) {
     // if there are event markers, clear them
     clearMarkers(eventMarkers);
 
-    // clear events output area and restore header
-    $("#eventOutput").empty().append("<h2>Events</h2>");
+    
     
     // reset event markers array
     eventMarkers = [];
@@ -171,11 +211,7 @@ function showEvents(resultData) {
     // get position and add marker by geocoding the address string; also pass the eventLocation array to receive the marker once created
     geocode (thisEvent.address, markerInfo, eventMarkers, type);
    
-   // display events in HTML
-    var eventBlock = $("<div>").addClass('outputBlock');
-    $(eventBlock).append("<h3>"+thisEvent.name+"</h3>"+"<p>"+thisEvent.venue+"</p>"+"<p>"+thisEvent.address+"</p><p>Starts: "+thisEvent.startTime+"</p><p>Ends: "+thisEvent.stopTime+"</p><p><a href=\""+thisEvent.url+" target=\"_blank\">More information</a></p>");
-      
-    $("#eventOutput").append(eventBlock);
+   
     } // end results loop
 
     // add a marker clusterer library t manage markers that are close together
@@ -191,10 +227,9 @@ function showRestaurants(resultData) {
     // if there are restaurant markers, clear them
     clearMarkers(restaurantMarkers);
     
-    // clear restaurant output area and restore header
-    $("#restOutput").empty().append("<h2>Dining</h2>");
 
     // reset restaurant markers array
+    restaurantMarkers = [];
     
     // is this event or restaurant? determines marker color later
     var type = 'restaurant';
@@ -219,11 +254,6 @@ function showRestaurants(resultData) {
     geocode( thisRestaurant.location, markerInfo, restaurantMarkers, type);
 
 
-    // display restaurants in HTML
-    var restBlock = $("<div>").addClass('outputBlock');
-    $(restBlock).append("<h3>"+thisRestaurant.name+"</h3><p>"+thisRestaurant.location+"</p><p>Average cost: $"+thisRestaurant.cost+"</p>"+thisRestaurant.menu);
-      
-    $("#restOutput").append(restBlock);
 
     } // end results loop
 } // end showRestaurants function
@@ -359,6 +389,7 @@ function getEventData(eventKeyWord, where, radius, when) {
               }
 
              address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
+              console.log(eventsArr[i].title + ' address: ' + address);
               events.push({
                     name: eventsArr[i].title,
                     address: address,
@@ -404,10 +435,12 @@ function getRestaurantData(keyWord, lat, long, radius ) {
                     location: results[i].restaurant.location.address,
                     cost: results[i].restaurant.average_cost_for_two,
                     menu: results[i].restaurant.menu_url
-                }; 
+                }; //!a could grow depending on additional info that we need
+                console.log("Restaurant address+ " + a.location);
                 restData.push(a);
             } //ends for loop
             showRestaurants(restData);
+            //console.log(restData);
       }); //ends done function
 }//end getRestaurantData function
 
@@ -416,13 +449,27 @@ function searchUserInput(){
       //prevent default form submit action
       event.preventDefault();
 
+      $("#mapControls").off().animate({
+        height: 30,
+        "max-width": "100%"
+        },500, function(){
+          $("#mapControls").css("cursor","pointer").on("click",function(){
+            $(this).animate({
+              height: "100%",
+              "max-width": 450
+            })
+       });
+      });
+      
+
       // get search radius value
       var radius = String( $("#radiusSelect").val() );
       //console.log('radius: '+radius);
 
       //search input values
-      var keyWord = $("#restSearch").val();
-      var eventKeyWord = $("#eventSearch").val();
+      var keyWord = $(".restSearch").val();
+      var eventKeyWord = $(".eventSearch").val();
+
 
       //sets search location based on user lat and long
       var where = userPos.lat+','+userPos.lng;
@@ -440,26 +487,28 @@ function searchUserInput(){
         //if no name entered, call them Anonymous with a random number between 0 and 1023
         user = 'Anonymous' + Math.floor( Math.random() * 1024 );
       }
+      //blanks out userName field
+      $('#userName').val('');
+
       //adds user search data to firebase so other connected users can see it
-      db.ref( user ).set({
-                          lat: userPos.lat, 
+      db.ref( user ).set({lat: userPos.lat, 
                           long: userPos.lng, 
                           radius: radius, 
                           eventSearch: eventKeyWord, 
                           restSearch: keyWord, 
-                          date: when,
-                          currentUser: 0
-                        }).then(function() {
+                          date: when
+                          }).then(function() {
                             //after data added to firebase, sets this user as current-user for highlighting
                             //change previously selected user to not selected
-                            let currSelection = $('current-user="yes"');
+                            let currSelection = $('[current-user="yes"')
                             currSelection.attr('current-user', 'no')
                             //set new user as currently selected
                             $('#' + user).attr('current-user', 'yes');
                             //adds listener to this user so it removes firebase data on disconnect
                             db.ref( user ).onDisconnect().remove(function(){
                             });
-                          });
+                          })
+      console.log(user);
 }//end searchUserInput function
 
 // document ready statements here
@@ -479,14 +528,9 @@ $(document).ready(function(){
 }); // end doc ready
 
 db.ref().on('child_added', function( childSnapshot ) {
+
   //create user name in user display section
   $('#users').append('<div class="user" current-user="no" id="' + childSnapshot.key + '">' + childSnapshot.key + '</div>');
-let data = childSnapshot.val();
-      let where = data.lat+','+data.long;
-      //populate selected user's events on map
-      getEventData( data.eventSearch, where, data.radius, data.date);
-      //populate selected user's restaurants on map
-      getRestaurantData(data.restSearch, data.lat, data.long, data.radius); 
 
   } , function( errorObject){
   console.log("Errors handled: " + errorObject.code);
@@ -506,35 +550,31 @@ db.ref().on('child_removed', function( childSnapshot ) {
 $(document).on('click', '.toggle-div', function(){
       if( $(this).children().text() == ' More>>>' ){ //show text and change toggle text to Less
           $(this).children().text(' <<<Less');
-          $(this).siblings().css({'overflow': 'auto', 'height': 'auto'});
+          $(this).siblings().css({'overflow': 'auto', 'height': 'auto'})
       } //end if block
       else{ //hide text and change toggle text to More
           $(this).children().text(' More>>>');
-          $(this).siblings().css({'overflow': 'hidden', 'height': '100px'});
+          $(this).siblings().css({'overflow': 'hidden', 'height': '100px'})
       } //end else blocl
 });//end toggle click function
 
 //when user name is clicked on, will set them as active user and show their search data
 $(document).on('click', '.user', function(){
+    //change currently selected user to not selected
+    let currSelection = $('[current-user="yes"')
+    currSelection.attr('current-user', 'no')
+    //set selected user to selected attribute for highlighting purposes
+    console.log("This user selected: " + $(this).attr('id') );
+    $(this).attr('current-user', 'yes');
     //get user search data from firebase
-    var x = Math.random();
-    db.ref( $(this).attr('id') ).update({
-      currentUser: x
-    });
-    db.ref( $(this).attr('id') ).on('value', function(snapshot){
+    db.ref( $(this).attr('id') ).once('value').then(function(snapshot){
       let data = snapshot.val();
-        console.log(data);
       let where = data.lat+','+data.long;
       //populate selected user's events on map
       getEventData( data.eventSearch, where, data.radius, data.date);
       //populate selected user's restaurants on map
       getRestaurantData(data.restSearch, data.lat, data.long, data.radius); 
 
-    }); //end firebase call
-    //change currently selected user to not selected
-//    let currSelection = $('[current-user="yes"');
-//    currSelection.attr('current-user', 'no');
-//    //set selected user to selected attribute for highlighting purposes
-//    $(this).attr('current-user', 'yes');
+    }) //end firebase call
 
 }); //end .user click function

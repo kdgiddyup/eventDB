@@ -13,19 +13,24 @@ body, html {
     overflow: hidden;
     background-color: grey;
 }
-
+.headerTitle {
+    padding: 0 0 0 10px;
+}
 #mapControls {
 	position: absolute;
-	top: 40px;
-	left: 50px;
+	top: 60px;
+	left: 0;
     background: linear-gradient( to right, #fff , 90%, rgba(255, 255, 255, 0.1));
+    height: 100%;
     opacity: .80;
-    padding: 20px;
-    height: 72%;
-    width: 25%;
+    padding: 20px 20px 80px 20px;
+    /* Michael changed the height from 72% to 100% 3.23.17 @ 14:05 */
+    width: 100%;
+    max-width: 450px;
     min-width: 300px;
-    /*overflow: auto; */
+    overflow: auto; 
 }
+
 #eventOutput {
     margin: 0 0 20px 0;
 }
@@ -84,5 +89,4 @@ h2{
 
 .user[current-user='yes']{
     background-color: #aaa;
-
 }

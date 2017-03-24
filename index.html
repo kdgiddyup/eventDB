@@ -26,44 +26,164 @@
    		<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
 
 		<style>
-
 		</style>
 	  <title>A night out in [you are here], powered by FBM</title>
 	 </head>
 	 <body>
+
+		
+			<div class="navbar-fixed"> 
+				<nav class="#009688 teal">
+					<div class="nav-wrapper headerTitle">
+						<h3>
+							FLEE
+						</h3>
+					</div>
+					<!-- <div class="headerSubtitle">
+						<p>
+							Wanna get away?
+						</p>	
+					</div> -->
+				</nav>
+			</div>
+		
+
 		<div id="map"></div>
+
+		
+
+		
 		<div id="mapControls">
 			<form>
-				<input id="userName" type="text" placeholder="Enter your name">
+
+
+				<p>
+					Who are you?
+				</p>
+			
+				<input id="userName" type="text" placeholder="Enter your name" class="input-field validate">
+
 				<p>
 					When's the big night?
 				</p>
 				<div>
-					<input data-required="required" type="date" id="inputDate"/>
+					<input class="datepicker" data-required="required" type="date" id="inputDate"/>
 				</div>
+				
+				
+				<!--Radius Search-->
 				<div>
-					<input data-required="" id="submitButton" type="submit" value="Your night awaits">
+
+					<p>
+						Search Radius (in mi)
+					</p>
+					<form action="#">
+    					<p class="range-field">
+      					<input type="range" min="0" max="100"id="radiusSelect"/>
+    					</p>
+  					</form>
 				</div>
-				<label for="radiusSelect"><br>Search Radius: </label>
-				<select id="radiusSelect" placeholder="Search radius">
-					<option type="radiusOption" value="1">1</option>
-					<option type="radiusOption" value="5">5</option>
-					<option selected="selected" type="radiusOption" value="10">10</option>
-					<option type="radiusOption" value="20">20</option>
-					<option type="radiusOption" value="30">30</option>
-
-				</select><br>
+				
 
 
-				<input id = "restSearch" type = 'text'  placeholder="Search for food options">
-				<input id = "eventSearch" type = 'text' placeholder="Search for events">
-				<div id="users"></div>
+				
+				<!--Food Type-->
+				<p>
+					What kind of food do you like?
+				</p>
+
+					<ul class="collapsible" data-collapsible="accordion">
+						<li>
+
+						<!--Dropdown food options-->
+						<div class="collapsible-header">Here are a few choices</div>
+							<div class="collapsible-body">
+								<p>
+									<input type="checkbox" class="restSearch" id="mex"/>
+		      						<label for="mex">Mexican</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox" class="restSearch" id="american"/>
+		      						<label for="american">American</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox"  class="restSearch" id="italia"/>
+		      						<label for="italia">Italian</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox" class="restSearch" id="asian"/>
+		      						<label for="asian">Asian</label>
+		      					</p>
+		      					<p>
+		      						<input type="checkbox" class="restSearch" id="junk"/>
+		      						<label for="junk">Junk</label>
+		      					</p>
+							</div>
+						</li>
+					</ul>
+
+
+						<!--Input food options-->
+						<div>
+							<input id="restSearch" type="text" class="restSearch" placeholder="Search for food options">
+						</div>
+						
+					
+					<br>
+
+				<!--Event Type-->
+				<p>
+					What kind of event do you wanna go to?
+				</p>
+
+				<ul class="collapsible" data-collapsible="accordion">
+					<li>
+						<div class="collapsible-header">Event Types</div>
+						<div class="collapsible-body">
+							<p>
+								<input type="checkbox" class="eventSearch" id="business"/>
+	      						<label for="business">Business</label>
+	      					</p>
+	      					<p>
+	      						<input type="checkbox" class="eventSearch" id="sporting"/>
+	      						<label for="sporting">Sporting</label>
+	      					</p>
+	      					<p>
+	      						<input type="checkbox"  class="eventSearch" id="sc"/>
+	      						<label for="sc">Seminar / Conference</label>
+	      					</p>
+	      					<p>
+	      						<input type="checkbox" class="eventSearch" id="music"/>
+	      						<label for="music">Music</label>
+	      					</p>
+	      				</div>
+					</li>
+				</ul>
+				<input id ="eventSearch" type="text" placeholder="Search for events">
+
+
+
+
+				<!--List of Users-->
+				<p>
+					Users
+				</p>
+				<div class="input-field validate" id="users"></div>
+
+				<br>
+
+
+				<!--Submit Button-->
+				<div>
+					<input data-required="" id="submitButton" type="submit" class="btn" value="Flee!">
+				</div>
+
+
 			</form>
 			
-			<div id="eventOutput"></div>
-			
-			<div id="restOutput"></div>
+
 		</div>
+	
 
 		<!-- keep this script at the bottom, above <body> tag -->
 
