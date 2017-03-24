@@ -133,6 +133,7 @@ function handleLocationError(error) {
     }
                 
 }
+$(".datepicker").pickadate({});
 
 function addUserMarker(geoLocated){
   if (geoLocated)
@@ -447,6 +448,19 @@ function getRestaurantData(keyWord, lat, long, radius ) {
 function searchUserInput(){
       //prevent default form submit action
       event.preventDefault();
+
+      $("#mapControls").off().animate({
+        height: 30,
+        "max-width": "100%"
+        },500, function(){
+          $("#mapControls").css("cursor","pointer").on("click",function(){
+            $(this).animate({
+              height: "100%",
+              "max-width": 450
+            })
+       });
+      });
+      
 
       // get search radius value
       var radius = String( $("#radiusSelect").val() );
