@@ -10,7 +10,8 @@ var config = {
 firebase.initializeApp(config);
 
 var db = firebase.database();
-
+//sets user as global variable for tracking purposes
+var user = '';
 
 window.onload = function() {
       gm = google.maps;
@@ -99,8 +100,7 @@ window.onload = function() {
           map.setCenter(mapCenter);
           console.log('Browser doesn\'t support Geolocation')
       }
-
-  }//end window.onload
+}//end window.onload
 
 // handle errors that occur during attempted browser geolocation
 function handleLocationError(error) {
@@ -121,8 +121,6 @@ function handleLocationError(error) {
     }
 }
 
-// resultData will be array of objects in format:
-// [{type: 'restaurant'|'event', name: '<name>', other response key-value pairs},{result2 object}, {result3 object}] 
 
 function showEvents(resultData) { 
     // if there are event markers, clear them
@@ -179,8 +177,7 @@ function showEvents(resultData) {
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     */
 
-
-} // end showEvents function
+}// end showEvents function
 
 function showRestaurants(resultData) { 
     // if there are restaurant markers, clear them
@@ -265,7 +262,7 @@ function addMarker(pos,windowInfo,_markers,type){
     
     marker.desc = windowInfo;
     oms.addMarker(marker);
-  }
+}
 
 // gets stringy address, returns {lat,lng} object in latLngCallback function
 function geocode( address,info,markerArray,type ){
@@ -282,7 +279,8 @@ function geocode( address,info,markerArray,type ){
 }
 
 //makes the API call for event data, then calls the function to place them on the map
-function getEventData(eventKeyWord, where, radius, when) {
+function getEventData(eventKeyWord, where, radius, when, count) {
+
     var oArgs = {
 
         app_key: 'GRMfQ3CqpWsGdfXM',
@@ -295,7 +293,7 @@ function getEventData(eventKeyWord, where, radius, when) {
 
         date: when+'-'+when,
 
-        page_size: 15,
+        page_size: count,
 
         sort_order: "popularity",
 
@@ -312,7 +310,7 @@ function getEventData(eventKeyWord, where, radius, when) {
         let address = '';
         let eventsArr = oData.events.event;
 
-
+        console.log(eventsArr);
         for (var i in eventsArr) {
 
               if( eventsArr[i].description === null){
@@ -348,7 +346,7 @@ function getEventData(eventKeyWord, where, radius, when) {
               }
 
              address = eventsArr[i].venue_address + ', ' + eventsArr[i].city_name + ', ' + eventsArr[i].region_abbr;
-              console.log(eventsArr[i].title + ' address: ' + address);
+              // console.log(eventsArr[i].title + ' address: ' + address);
               events.push({
                     name: eventsArr[i].title,
                     address: address,
@@ -368,14 +366,14 @@ function getEventData(eventKeyWord, where, radius, when) {
 }//end getEventData function
 
 //makes the API call for restaurant data, then calls the function to place them on the map
-function getRestaurantData(keyWord, lat, long, radius ) {
+function getRestaurantData(keyWord, lat, long, radius, count ) {
   // restaurant ajax call from P. Hussey
     // adapted by K. Davis to get restaurants close to user geolocation
     var restData = [];
     // console.log(keyWord); 
-    var queryURL = "https://developers.zomato.com/api/v2.1/search?q="+ keyWord +"&count=15&lat="+ lat +"&lon="+ long +"&radius="+radius+"sort=cost&order=asc";
+    var queryURL = "https://developers.zomato.com/api/v2.1/search?q="+ keyWord +"&count="+ count +"&lat="+ lat +"&lon="+ long +"&radius="+radius+"sort=cost&order=asc";
     var key = "1d78eb50e1194c317037b03a6ab3118e";
-
+    console.log( queryURL )
     $.ajax({
             url: queryURL,
             method: "GET",
@@ -386,6 +384,7 @@ function getRestaurantData(keyWord, lat, long, radius ) {
         .done(function(response) {
             restData = [];
             let results = response.restaurants;
+            console.log( results );
             //console.log(results);
             for (var i = 0; i < results.length; i++) {
 
@@ -395,7 +394,7 @@ function getRestaurantData(keyWord, lat, long, radius ) {
                     cost: results[i].restaurant.average_cost_for_two,
                     menu: results[i].restaurant.menu_url
                 }; //!a could grow depending on additional info that we need
-                console.log("Restaurant address+ " + a.location);
+                //console.log("Restaurant address+ " + a.location);
                 restData.push(a);
             } //ends for loop
             showRestaurants(restData);
@@ -403,18 +402,147 @@ function getRestaurantData(keyWord, lat, long, radius ) {
       }); //ends done function
 }//end getRestaurantData function
 
+//set needed classes, sets inputs to selected user's selections, and makes call to display events/restaurants
+function showSelectedOptions( thisUser ){
+    let currSelection = $('[current-user="yes"')
+    currSelection.attr('current-user', 'no')
+    //set selected user to selected attribute for highlighting purposes
+    // console.log("This user selected: " + $(this).attr('id') );
+    $('#' + thisUser).attr('current-user', 'yes');
+    //sets top area of panel to show current user's name
+    $('#userName-area').html('<h3>' + thisUser + "'s night out</h3>");
+    //clear out restaurant Checkboxes
+    let checkBoxes = $('.restSearch');
+    checkBoxes.each(function(item) {
+        // console.log($( this ).val() );
+        $(this).prop('checked', false );          
+    })
+
+    //clear out event Checkboxes
+    checkBoxes = $('.eventSearch');
+    checkBoxes.each(function(item) {
+        // console.log($( this ).val() );
+        $(this).prop('checked', false);          
+    })
+
+    //reset input fields
+    $("#restSearch").val('');
+    $("#eventSearch").val('');
+    //reset radius
+    $("#radiusSelect").val(50);
+
+    //get user search data from firebase
+    db.ref( thisUser ).once('value').then(function(snapshot){
+        let data = snapshot.val();
+        let where = data.lat+','+data.long;
+
+        //populate selected user's events on map
+        getEventData( data.eventSearch, where, data.radius, data.date, data.numEvents);
+        //populate selected user's restaurants on map
+        getRestaurantData(data.restSearch, data.lat, data.long, data.radius, data.numRests);
+        //turn searches into arrays
+        let selectedEvents = data.eventSearch.split(' || ');
+        //console.log('Events: ' + selectedEvents + ' Length: ' + selectedEvents.length );
+        let selectedRests = data.restSearch.split(' OR ');
+        //console.log('Restaurants: ' + selectedRests + ' Length: ' + selectedRests.length );
+        
+        //check selected boxes based on user's selections
+        let checkBoxes = $('.eventSearch');
+        checkBoxes.each(function(item) {
+            let index = selectedEvents.indexOf( $(this).val() )
+            if( index > -1){
+              $(this).prop('checked', true );
+              selectedEvents.splice(index, 1)         
+            }
+        })
+        //if there's still something in the array, put it in the search field
+        if(selectedEvents.length > 0){
+          $('#eventSearch').val( selectedEvents[0] )
+        }
+        //check selected boxes based on user's selections
+        checkBoxes = $('.restSearch');
+        checkBoxes.each(function(item) {
+            let index = selectedRests.indexOf( $(this).val() )
+            if( index > -1){
+              $(this).prop('checked', true );
+              selectedRests.splice(index, 1)         
+            }
+        })
+        //if there's still something in the array, put it in the search field
+        if(selectedRests.length > 0){
+          $('#restSearch').val( selectedRests[0] )
+        }
+
+    }) //end firebase call
+}//end showSelectedOptions function
+
 //retrieves user input, adds it to the map and to firebase
 function searchUserInput(){
+
+      let restaurantOptions = [];
+      let eventOptions = [];
+      let numRests = 15;
+      let numEvents =  15;
       //prevent default form submit action
       event.preventDefault();
 
       // get search radius value
       var radius = String( $("#radiusSelect").val() );
-      //console.log('radius: '+radius);
+      console.log('radius: '+radius);
 
       //search input values
-      var keyWord = $(".restSearch").val();
-      var eventKeyWord = $(".eventSearch").val();
+      if( $("#restSearch").val() != ''){
+        var keyWord = restaurantOptions.push( $("#restSearch").val() );
+      }
+
+      if( $("#eventSearch").val() != ''){
+        var eventKeyWord = eventOptions.push( $("#eventSearch").val() );
+      }
+
+      let checkedBoxes = $('.restSearch:checked');
+      checkedBoxes.each(function(item) {
+          console.log($( this ).val() );
+          restaurantOptions.push( $(this).val() );          
+      })
+
+
+
+      checkedBoxes = $('.eventSearch:checked');
+      checkedBoxes.each(function(item) {
+          console.log($( this ).val() );
+          eventOptions.push( $(this).val() );          
+      })
+      // for(let i=0; i < checkedBoxes.length; i++){
+      //   if( checkedBoxes[i].checked ){
+      //      restaurantOptions.push( checkedBoxes[i].value );
+      //   }
+      // }
+      // for(let i=0; i < checkedBoxes; )
+      console.log(restaurantOptions);
+      var restQuery;
+      if(restaurantOptions.length >= 1){
+            restQuery = restaurantOptions[0]
+      
+            for( let i = 1; i < (restaurantOptions.length) ; i++){
+              restQuery += ' OR ' + restaurantOptions[i];
+              numRests += 5;
+            }
+      }
+      else{ restQuery = ''; }
+
+      var eventQuery;
+      if(eventOptions.length >= 1){
+            eventQuery = eventOptions[0]
+      
+            for( let i = 1; i < (eventOptions.length) ; i++){
+              eventQuery += ' || ' + eventOptions[i];
+              numEvents += 5;
+            }
+      }
+      else{ eventQuery = ''; }
+
+      console.log('Event query: ' + eventQuery)
+
 
 
       //sets search location based on user lat and long
@@ -422,34 +550,39 @@ function searchUserInput(){
       //formats date for event api call
       var when = $("#inputDate").val().replace(/-/g,'')+'00';
       //populates map with user's events search
-      getEventData( eventKeyWord, where, radius, when);
-      //populates map with user's restaurants search
-      getRestaurantData(keyWord, userPos.lat, userPos.lng, radius);  
+      // getEventData( eventQuery, where, radius, when, numEvents);
+      // //populates map with user's restaurants search
+      // getRestaurantData(restQuery, userPos.lat, userPos.lng, radius, numRests);  
       //console.log(when);
 
       //gets user name for firebase tracking
-      var user = $('#userName').val().trim();
-      if( user == ''){
-        //if no name entered, call them Anonymous with a random number between 0 and 1023
-        user = 'Anonymous' + Math.floor( Math.random() * 1024 );
+      
+      if( user == '' ){
+        //sets user name to input field if the user does not already have a name
+        user = $('#userName').val().trim();
+    
+        if( user == ''){
+          //if no name entered, call them Anonymous with a random number between 0 and 1023
+          user = 'Anonymous' + Math.floor( Math.random() * 1024 );
+        }
       }
-      //blanks out userName field
-      $('#userName').val('');
+      //removes userName field and replaces it with their name
+      console.log('Third user check: ' + user);
+      $('#userName-area').html('<h3>' + user + "'s night out</h3>");
 
       //adds user search data to firebase so other connected users can see it
       db.ref( user ).set({lat: userPos.lat, 
                           long: userPos.lng, 
                           radius: radius, 
-                          eventSearch: eventKeyWord, 
-                          restSearch: keyWord, 
-                          date: when
+                          eventSearch: eventQuery, 
+                          restSearch: restQuery, 
+                          date: when,
+                          numEvents: numEvents,
+                          numRests: numRests
                           }).then(function() {
-                            //after data added to firebase, sets this user as current-user for highlighting
-                            //change previously selected user to not selected
-                            let currSelection = $('[current-user="yes"')
-                            currSelection.attr('current-user', 'no')
-                            //set new user as currently selected
-                            $('#' + user).attr('current-user', 'yes');
+                            
+                            //after data added to firebase, shows users options on map
+                            showSelectedOptions( user )
                             //adds listener to this user so it removes firebase data on disconnect
                             db.ref( user ).onDisconnect().remove(function(){
                             });
@@ -470,7 +603,6 @@ $(document).ready(function(){
 
   //runs function to add user search inputs to map, and to firebase
   $("#submitButton").on("click", searchUserInput );
-
 }); // end doc ready
 
 db.ref().on('child_added', function( childSnapshot ) {
@@ -507,20 +639,5 @@ $(document).on('click', '.toggle-div', function(){
 //when user name is clicked on, will set them as active user and show their search data
 $(document).on('click', '.user', function(){
     //change currently selected user to not selected
-    let currSelection = $('[current-user="yes"')
-    currSelection.attr('current-user', 'no')
-    //set selected user to selected attribute for highlighting purposes
-    console.log("This user selected: " + $(this).attr('id') );
-    $(this).attr('current-user', 'yes');
-    //get user search data from firebase
-    db.ref( $(this).attr('id') ).once('value').then(function(snapshot){
-      let data = snapshot.val();
-      let where = data.lat+','+data.long;
-      //populate selected user's events on map
-      getEventData( data.eventSearch, where, data.radius, data.date);
-      //populate selected user's restaurants on map
-      getRestaurantData(data.restSearch, data.lat, data.long, data.radius); 
-
-    }) //end firebase call
-
+    showSelectedOptions( $(this).attr('id') )
 }); //end .user click function

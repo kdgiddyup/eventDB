@@ -57,13 +57,13 @@
 		<div id="mapControls">
 			<form>
 
-
-				<p>
-					Who are you?
-				</p>
-			
-				<input id="userName" type="text" placeholder="Enter your name" class="input-field validate">
-
+				<div id="userName-area">
+					<p>
+						Who are you?
+					</p>
+				
+					<input id="userName" type="text" placeholder="Enter your name" class="input-field validate">
+				</div>
 				<p>
 					When's the big night?
 				</p>
@@ -80,7 +80,7 @@
 					</p>
 					<form action="#">
     					<p class="range-field">
-      					<input type="range" min="0" max="100"id="radiusSelect"/>
+      					<input type="range" min="0" max="100" id="radiusSelect"/>
     					</p>
   					</form>
 				</div>
@@ -100,23 +100,23 @@
 						<div class="collapsible-header">Here are a few choices</div>
 							<div class="collapsible-body">
 								<p>
-									<input type="checkbox" class="restSearch" id="mex"/>
-		      						<label for="mex">Mexican</label>
+									<input type="checkbox" id="mexican" class="restSearch" value="mexican" name="cuisine"/>
+		      						<label for="mexican">Mexican</label>
 		      					</p>
 		      					<p>
-		      						<input type="checkbox" class="restSearch" id="american"/>
+		      						<input type="checkbox" id="american" class="restSearch" value="american" name="cuisine"/>
 		      						<label for="american">American</label>
 		      					</p>
 		      					<p>
-		      						<input type="checkbox"  class="restSearch" id="italia"/>
-		      						<label for="italia">Italian</label>
+		      						<input type="checkbox"  id="italian" class="restSearch" value="italian" name="cuisine"/>
+		      						<label for="italian">Italian</label>
 		      					</p>
 		      					<p>
-		      						<input type="checkbox" class="restSearch" id="asian"/>
+		      						<input type="checkbox" id="asian" class="restSearch" value="asian" name="cuisine"/>
 		      						<label for="asian">Asian</label>
 		      					</p>
 		      					<p>
-		      						<input type="checkbox" class="restSearch" id="junk"/>
+		      						<input type="checkbox" id="junk" class="restSearch" value="junk" name="cuisine"/>
 		      						<label for="junk">Junk</label>
 		      					</p>
 							</div>
@@ -142,19 +142,19 @@
 						<div class="collapsible-header">Event Types</div>
 						<div class="collapsible-body">
 							<p>
-								<input type="checkbox" class="eventSearch" id="business"/>
+								<input type="checkbox" class="eventSearch" id="business" name="event" value="business"/>
 	      						<label for="business">Business</label>
 	      					</p>
 	      					<p>
-	      						<input type="checkbox" class="eventSearch" id="sporting"/>
+	      						<input type="checkbox" class="eventSearch" id="sporting" name="event" value="sports"/>
 	      						<label for="sporting">Sporting</label>
 	      					</p>
 	      					<p>
-	      						<input type="checkbox"  class="eventSearch" id="sc"/>
+	      						<input type="checkbox"  class="eventSearch" id="sc" name="event" value="seminar"/>
 	      						<label for="sc">Seminar / Conference</label>
 	      					</p>
 	      					<p>
-	      						<input type="checkbox" class="eventSearch" id="music"/>
+	      						<input type="checkbox" class="eventSearch" id="music" name="event" value="music"/>
 	      						<label for="music">Music</label>
 	      					</p>
 	      				</div>
